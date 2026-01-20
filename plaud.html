@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>輔大麻醉 PLAUD Note 團購表單</title>
+    <meta name="description" content="輔大麻醉 PLAUD Note 團購專用頁面">
+    <meta property="og:title" content="輔大麻醉 PLAUD Note 團購">
+    <meta property="og:image" content="https://ssl.gstatic.com/docs/forms/social/social-forms-big-2.png">
+    
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+    <!-- 引入 Font Awesome Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            900: '#0B0B0F', // 極深背景
+                            800: '#13131A', // 卡片背景
+                            700: '#1C1C26', // 輸入框背景
+                        },
+                        primary: '#8b5cf6', // 紫色
+                        accent: '#a78bfa',  // 亮紫色
+                    },
+                    fontFamily: {
+                        sans: ['Noto Sans TC', 'sans-serif'],
+                        tech: ['Orbitron', 'sans-serif'], // 科技感字體
+                    },
+                    boxShadow: {
+                        'neon': '0 0 5px theme("colors.primary"), 0 0 20px theme("colors.primary")',
+                        'neon-sm': '0 0 2px theme("colors.primary"), 0 0 10px theme("colors.primary")',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* 自定義樣式 */
+        body {
+            background-color: #0B0B0F;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(76, 29, 149, 0.15) 0%, transparent 20%);
+            background-attachment: fixed;
+            
+            /* 禁止選取文字核心樣式 */
+            -webkit-user-select: none; /* Safari */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* IE10+/Edge */
+            user-select: none; /* Standard */
+        }
+        
+        /* 允許輸入框內容被選取/編輯，否則使用者無法修改自己輸入的文字 */
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        /* 滾動條樣式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0B0F; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6; 
+        }
+
+        .form-radio:checked {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+        .form-checkbox:checked {
+            background-color: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+        /* 隱藏 Iframe */
+        #hidden_iframe {
+            display: none;
+        }
+        /* 產品卡片懸浮效果 */
+        .product-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(139, 92, 246, 0.1);
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(139, 92, 246, 0.5);
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
+        }
+        
+        /* 載入動畫 */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            border-top: 3px solid #a78bfa;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* 玻璃擬態背景 */
+        .glass-panel {
+            background: rgba(19, 19, 26, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="font-sans text-gray-200 antialiased selection:bg-primary selection:text-white">
+
+    <!-- 頂部光暈條 -->
+    <div class="h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 w-full fixed top-0 z-50 shadow-neon"></div>
+
+    <div class="container mx-auto px-4 py-8 max-w-3xl mt-8">
+        
+        <!-- 標題區塊 -->
+        <div class="glass-panel rounded-2xl shadow-2xl overflow-hidden mb-8 relative group">
+            <!-- 裝飾光點 -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary rounded-full blur-[80px] opacity-20 group-hover:opacity-40 transition duration-500"></div>
+            
+            <div class="p-8 md:p-10 relative z-10">
+                <h1 class="text-3xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400 mb-2 font-tech tracking-wide" style="text-shadow: 0 0 30px rgba(139, 92, 246, 0.3);">
+                    輔大麻醉 <span class="text-primary">PLAUD Note</span>
+                </h1>
+                <h2 class="text-xl text-accent mb-6 font-light tracking-widest uppercase">Technology Group Buy</h2>
+                
+                <div class="prose max-w-none text-gray-400 space-y-3">
+                    <div class="bg-primary/10 border-l-4 border-primary p-4 rounded-r-lg">
+                        <p class="text-sm md:text-base flex items-start">
+                            <i class="fas fa-exclamation-triangle mt-1 mr-3 text-accent"></i>
+                            <span>
+                                廠商表示 <strong class="text-white">至少要 10 台才會成團</strong>，如果沒有達標會再跟大家通知。
+                            </span>
+                        </p>
+                    </div>
+                    <p class="text-xs text-gray-500 flex items-center mt-2">
+                        <i class="fas fa-shield-alt mr-2"></i> 利益揭露：我自己有買兩台了，團購純粹想說好東西分享。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 表單開始 -->
+        <form action="https://docs.google.com/forms/d/e/1FAIpQLSdtqTXE7eNlkfouGjjZA09AjSLBFts4teHdNzzISaMUQqCJ1g/formResponse" 
+              method="POST" 
+              target="hidden_iframe" 
+              id="groupBuyForm"
+              onsubmit="handleSubmit()">
+
+            <!-- 基本資料 -->
+            <div class="glass-panel rounded-2xl shadow-lg p-8 mb-8">
+                <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2 flex items-center">
+                    <span class="bg-primary/20 text-primary w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">01</span>
+                    基本聯絡資料
+                </h2>
+                
+                <!-- Email -->
+                <div class="mb-6 group">
+                    <label for="emailAddress" class="block text-sm font-medium text-gray-400 mb-2 group-hover:text-accent transition">
+                        電子郵件 <span class="text-primary">*</span>
+                    </label>
+                    <input type="email" name="emailAddress" id="emailAddress" required placeholder="example@email.com"
+                           class="w-full px-4 py-3 bg-dark-700 border border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent focus:shadow-neon-sm outline-none transition text-white placeholder-gray-600">
+                </div>
+
+                <!-- 姓名 -->
+                <div class="mb-6 group">
+                    <label for="entry.2075935989" class="block text-sm font-medium text-gray-400 mb-2 group-hover:text-accent transition">
+                        姓名 <span class="text-primary">*</span>
+                    </label>
+                    <input type="text" name="entry.2075935989" id="entry.2075935989" required placeholder="請輸入您的真實姓名"
+                           class="w-full px-4 py-3 bg-dark-700 border border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent focus:shadow-neon-sm outline-none transition text-white placeholder-gray-600">
+                </div>
+
+                <!-- 手機 -->
+                <div class="mb-2 group">
+                    <label for="entry.642143534" class="block text-sm font-medium text-gray-400 mb-2 group-hover:text-accent transition">
+                        手機 <span class="text-primary">*</span>
+                    </label>
+                    <input type="tel" name="entry.642143534" id="entry.642143534" required placeholder="09xx-xxx-xxx"
+                           class="w-full px-4 py-3 bg-dark-700 border border-gray-700 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent focus:shadow-neon-sm outline-none transition text-white placeholder-gray-600">
+                </div>
+            </div>
+
+            <!-- 產品選擇區 -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2 px-2 flex items-center">
+                    <span class="bg-primary/20 text-primary w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">02</span>
+                    選擇產品
+                </h2>
+                <div class="space-y-6">
+                    
+                    <!-- 產品 1: NotePin 簡配 -->
+                    <div class="glass-panel rounded-2xl shadow-lg overflow-hidden product-card group">
+                        <div class="relative">
+                            <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVD4yz8tSH7KJIdAhNOYPBQ7gM1Vgil0Ig7anVqvh2OwR0pMclUfE73aug1H8pdvHVaRIyP7DFeTAxi260qAxccxBZIRoHCM6_AspC5fvHB0i-GlAgZKeHmEefArDqpPHk3kXAy7U3wgnssRb2qBm9nVzf6wH9N6Q_KiRCfLD15yfa7Vzmd3hwtArzpkdWvfMRZW_w_dIFnFnRdA=w740" alt="PLAUD NotePin 簡配" class="w-full h-56 object-cover sm:h-72 opacity-90 group-hover:opacity-100 transition">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-6">
+                                <span class="bg-black/60 backdrop-blur-md text-white text-xs px-3 py-1 rounded-full border border-gray-600">Basic Edition</span>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-2xl font-bold text-white font-tech">PLAUD NoteeeePin <span class="text-primary text-lg font-sans">簡配</span></h3>
+                                <span class="bg-primary/20 text-accent border border-primary/50 text-sm font-bold px-3 py-1 rounded-lg shadow-neon-sm">NT$ 4,990</span>
+                            </div>
+                            <div class="text-sm text-gray-400 mb-6 bg-dark-700/50 p-4 rounded-xl border border-gray-800">
+                                <ul class="space-y-2">
+                                    <li class="flex items-center"><i class="fas fa-check text-primary mr-2 text-xs"></i> 1 x PLAUD NotePin</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-primary mr-2 text-xs"></i> 含配件組：夾扣、磁吸片</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-primary mr-2 text-xs"></i> 充電座 x 1</li>
+                                    <li class="flex items-center"><i class="fas fa-check text-primary mr-2 text-xs"></i> USB-C 充電線 x 1</li>
+                                </ul>
+                            </div>
+                            <label class="block text-sm font-medium text-gray-400 mb-3">購買數量</label>
+                            <div class="flex flex-wrap gap-3">
+                                <!-- 產生數量選項 0-3 -->
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.1129072333" value="0" class="peer sr-only" checked>
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">0</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.1129072333" value="1" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">1</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.1129072333" value="2" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">2</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.1129072333" value="3" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">3</div>
+                                </label>
+                                <!-- 其他數量 -->
+                                <div class="relative flex items-center flex-[2] min-w-[120px]">
+                                    <label class="cursor-pointer flex items-center w-full">
+                                        <input type="radio" name="entry.1129072333" value="__other_option__" class="peer sr-only" id="radio_other_1">
+                                        <div class="w-full flex">
+                                            <div class="px-3 py-3 rounded-l-lg border border-r-0 border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:border-r-0 transition flex items-center whitespace-nowrap">其他</div>
+                                            <input type="text" name="entry.1129072333.other_option_response" placeholder="數量" onclick="document.getElementById('radio_other_1').checked = true" class="w-full px-3 py-3 bg-dark-900 border border-gray-700 rounded-r-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-white text-center transition">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 產品 2: NotePin 全配 -->
+                    <div class="glass-panel rounded-2xl shadow-lg overflow-hidden product-card group">
+                        <div class="relative">
+                            <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVCbqfinPIxQME2DvxxzV4XCCHS5P-ijOoutkRDXZf2jQd_AXrXKa4r8D9FzJN_Xl7bnF-jj2UMzbl82pC1rdxIAqFsupgN7-BUWy3krJdovgiZNH7vaJV7sc7GqUoOftmWGdjF1xj2e-is1K3V8LDvG-5IQDLf668EXvZ9Roi-18hArVdUubXyuvYQzqIOq1bIXXATTa-ONGt_L=w740" alt="PLAUD NotePin 全配" class="w-full h-56 object-cover sm:h-72 opacity-90 group-hover:opacity-100 transition">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-6">
+                                <span class="bg-primary text-white text-xs px-3 py-1 rounded-full shadow-neon">Full Package</span>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-2xl font-bold text-white font-tech">PLAUD NotePin <span class="text-primary text-lg font-sans">全配</span></h3>
+                                <span class="bg-primary/20 text-accent border border-primary/50 text-sm font-bold px-3 py-1 rounded-lg shadow-neon-sm">NT$ 5,299</span>
+                            </div>
+                            <div class="text-sm text-gray-400 mb-6 bg-dark-700/50 p-4 rounded-xl border border-gray-800">
+                                <p class="font-semibold text-white mb-1"><i class="fas fa-plus-circle text-accent mr-1"></i> 基本款 + 手環 + 吊繩</p>
+                                <p class="text-xs text-gray-500">（配件原價皆為 $780，全配較划算）</p>
+                            </div>
+                            <label class="block text-sm font-medium text-gray-400 mb-3">購買數量</label>
+                            <div class="flex flex-wrap gap-3">
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.2144508441" value="0" class="peer sr-only" checked>
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">0</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.2144508441" value="1" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">1</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.2144508441" value="2" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">2</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.2144508441" value="3" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">3</div>
+                                </label>
+                                <div class="relative flex items-center flex-[2] min-w-[120px]">
+                                    <label class="cursor-pointer flex items-center w-full">
+                                        <input type="radio" name="entry.2144508441" value="__other_option__" class="peer sr-only" id="radio_other_2">
+                                        <div class="w-full flex">
+                                            <div class="px-3 py-3 rounded-l-lg border border-r-0 border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:border-r-0 transition flex items-center whitespace-nowrap">其他</div>
+                                            <input type="text" name="entry.2144508441.other_option_response" placeholder="數量" onclick="document.getElementById('radio_other_2').checked = true" class="w-full px-3 py-3 bg-dark-900 border border-gray-700 rounded-r-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-white text-center transition">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 產品 3: Note (舊款) -->
+                    <div class="glass-panel rounded-2xl shadow-lg overflow-hidden product-card group">
+                        <div class="relative">
+                            <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVABowDdm8kyMFNORlal5H32z_PHn2wB8pYgqa-DUif-pOTtzDwlVip4H3jicKv2yti3O5kfFhnsK2Gp7KUsEiplLNJchmI1SvCja5e90pD515eAF3emiaLr1PdwiC3dWYj3Et56ekhVcM2oURy_NtIvPLzi23XIgfPFZkgXQN0D8VMMF2fHD9LFBDU6TKnEFspB4Ka4kiCKJrma=w740" alt="PLAUD Note" class="w-full h-56 object-cover sm:h-72 opacity-90 group-hover:opacity-100 transition">
+                            <div class="absolute inset-0 bg-gradient-to-t from-dark-800 via-transparent to-transparent"></div>
+                            <div class="absolute bottom-4 left-6">
+                                <span class="bg-gray-700/80 backdrop-blur-md text-gray-300 text-xs px-3 py-1 rounded-full border border-gray-600">Previous Gen</span>
+                            </div>
+                        </div>
+                        <div class="p-6 md:p-8">
+                            <div class="flex justify-between items-start mb-4">
+                                <h3 class="text-2xl font-bold text-gray-300 font-tech">PLAUD Note <span class="text-gray-500 text-lg font-sans font-normal">(舊款)</span></h3>
+                                <span class="bg-green-900/40 text-green-400 border border-green-500/30 text-sm font-bold px-3 py-1 rounded-lg">NT$ 4,690</span>
+                            </div>
+                            <div class="text-sm text-gray-400 mb-6 bg-dark-700/50 p-4 rounded-xl border border-gray-800">
+                                <p>原價 <span class="line-through text-gray-600">NT$ 5,490</span> <span class="text-green-400 ml-2">(Save $800)</span></p>
+                            </div>
+                            <label class="block text-sm font-medium text-gray-400 mb-3">購買數量</label>
+                            <div class="flex flex-wrap gap-3">
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.614284799" value="0" class="peer sr-only" checked>
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">0</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.614284799" value="1" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">1</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.614284799" value="2" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">2</div>
+                                </label>
+                                <label class="cursor-pointer flex-1 min-w-[60px]">
+                                    <input type="radio" name="entry.614284799" value="3" class="peer sr-only">
+                                    <div class="text-center px-2 py-3 rounded-lg border border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:shadow-neon-sm transition hover:bg-dark-700/80">3</div>
+                                </label>
+                                <div class="relative flex items-center flex-[2] min-w-[120px]">
+                                    <label class="cursor-pointer flex items-center w-full">
+                                        <input type="radio" name="entry.614284799" value="__other_option__" class="peer sr-only" id="radio_other_3">
+                                        <div class="w-full flex">
+                                            <div class="px-3 py-3 rounded-l-lg border border-r-0 border-gray-700 text-gray-500 bg-dark-700 peer-checked:bg-primary/20 peer-checked:text-white peer-checked:border-primary peer-checked:border-r-0 transition flex items-center whitespace-nowrap">其他</div>
+                                            <input type="text" name="entry.614284799.other_option_response" placeholder="數量" onclick="document.getElementById('radio_other_3').checked = true" class="w-full px-3 py-3 bg-dark-900 border border-gray-700 rounded-r-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-white text-center transition">
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 交貨地點 -->
+            <div class="glass-panel rounded-2xl shadow-lg p-8 mb-8">
+                <h2 class="text-xl font-bold text-white mb-6 border-b border-gray-700 pb-2 flex items-center">
+                    <span class="bg-primary/20 text-primary w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">03</span>
+                    交貨地點 <span class="text-primary ml-1">*</span>
+                </h2>
+                <p class="text-sm text-gray-500 mb-6 flex items-center"><i class="fas fa-map-marker-alt mr-2 text-accent"></i> 不確定廠商是否會寄送，所以先約定點交貨。</p>
+                <div class="space-y-4">
+                    <label class="flex items-center space-x-4 cursor-pointer p-4 border border-gray-700 bg-dark-700 rounded-xl hover:bg-dark-700/80 hover:border-primary/50 transition group">
+                        <div class="relative flex items-center justify-center w-5 h-5">
+                            <input type="radio" name="entry.1541660470" value="輔大醫院" class="peer sr-only" required>
+                            <div class="w-5 h-5 border-2 border-gray-500 rounded-full peer-checked:border-primary peer-checked:bg-primary/20 transition"></div>
+                            <div class="absolute w-2.5 h-2.5 bg-primary rounded-full opacity-0 peer-checked:opacity-100 transition transform scale-0 peer-checked:scale-100"></div>
+                        </div>
+                        <span class="text-gray-300 font-medium group-hover:text-white transition">輔大醫院</span>
+                    </label>
+                    <label class="flex items-center space-x-4 cursor-pointer p-4 border border-gray-700 bg-dark-700 rounded-xl hover:bg-dark-700/80 hover:border-primary/50 transition group">
+                        <div class="relative flex items-center justify-center w-5 h-5">
+                            <input type="radio" name="entry.1541660470" value="台大醫學院" class="peer sr-only">
+                            <div class="w-5 h-5 border-2 border-gray-500 rounded-full peer-checked:border-primary peer-checked:bg-primary/20 transition"></div>
+                            <div class="absolute w-2.5 h-2.5 bg-primary rounded-full opacity-0 peer-checked:opacity-100 transition transform scale-0 peer-checked:scale-100"></div>
+                        </div>
+                        <span class="text-gray-300 font-medium group-hover:text-white transition">台大醫學院</span>
+                    </label>
+                    <label class="flex items-center space-x-4 cursor-pointer p-4 border border-gray-700 bg-dark-700 rounded-xl hover:bg-dark-700/80 hover:border-primary/50 transition group">
+                        <div class="relative flex items-center justify-center w-5 h-5">
+                            <input type="radio" name="entry.1541660470" value="我跟你很好我們另外約" class="peer sr-only">
+                            <div class="w-5 h-5 border-2 border-gray-500 rounded-full peer-checked:border-primary peer-checked:bg-primary/20 transition"></div>
+                            <div class="absolute w-2.5 h-2.5 bg-primary rounded-full opacity-0 peer-checked:opacity-100 transition transform scale-0 peer-checked:scale-100"></div>
+                        </div>
+                        <span class="text-gray-300 font-medium group-hover:text-white transition">我跟你很好我們另外約</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 承諾書 -->
+            <div class="glass-panel rounded-2xl shadow-lg p-8 mb-8 border border-red-900/30 relative overflow-hidden">
+                <!-- 背景紅光裝飾 -->
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-red-600/10 rounded-full blur-[50px]"></div>
+                
+                <h2 class="text-xl font-bold text-white mb-6 flex items-center relative z-10">
+                    <span class="bg-red-500/20 text-red-400 w-8 h-8 rounded-full flex items-center justify-center mr-3 text-sm">04</span>
+                    承諾書 <span class="text-red-500 ml-1">*</span>
+                </h2>
+                <div class="space-y-4 relative z-10">
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+                            <input type="checkbox" name="entry.122802898" value="我知道沒有10組不會成團，不會吵鬧" class="peer sr-only" required>
+                            <div class="w-5 h-5 border-2 border-gray-500 rounded peer-checked:border-primary peer-checked:bg-primary transition"></div>
+                            <i class="fas fa-check absolute text-white text-xs opacity-0 peer-checked:opacity-100 transition"></i>
+                        </div>
+                        <span class="text-gray-400 group-hover:text-gray-200 transition select-text">我知道沒有 10 組不會成團，不會吵鬧</span>
+                    </label>
+                    <label class="flex items-start space-x-3 cursor-pointer group">
+                        <div class="relative flex items-center justify-center w-6 h-6 mt-0.5">
+                            <input type="checkbox" name="entry.122802898" value="我承諾不會跑單，如果跑單的話每次上班旺到哭出來" class="peer sr-only" required>
+                            <div class="w-5 h-5 border-2 border-gray-500 rounded peer-checked:border-primary peer-checked:bg-primary transition"></div>
+                            <i class="fas fa-check absolute text-white text-xs opacity-0 peer-checked:opacity-100 transition"></i>
+                        </div>
+                        <span class="text-gray-400 group-hover:text-gray-200 transition select-text">我承諾不會跑單，如果跑單的話每次上班旺到哭出來 😭</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 送出按鈕 -->
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-indigo-600 via-primary to-purple-600 hover:from-indigo-500 hover:via-primary hover:to-purple-500 text-white font-bold py-5 px-6 rounded-2xl shadow-neon transform transition duration-300 hover:scale-[1.02] active:scale-95 flex justify-center items-center text-lg tracking-wider">
+                <span>提交團購單</span>
+            </button>
+
+        </form>
+
+        <div class="text-center text-gray-600 text-xs mt-12 pb-8">
+            <p>&copy; 2025 輔大麻醉團購小組</p>
+            <p class="mt-1 opacity-50">DESIGNED FOR PLAUD NOTE</p>
+        </div>
+    </div>
+
+    <!-- 成功彈跳視窗 -->
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 hidden opacity-0 transition-opacity duration-300">
+        <div class="glass-panel border border-primary/30 rounded-2xl shadow-[0_0_50px_rgba(139,92,246,0.3)] p-8 max-w-sm w-full mx-4 text-center transform scale-90 transition-transform duration-300 relative overflow-hidden" id="modalContent">
+            <!-- 裝飾光 -->
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent"></div>
+            
+            <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-neon-sm">
+                <i class="fas fa-check text-4xl text-primary"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-white mb-2 font-tech">ORDER SENT</h3>
+            <p class="text-gray-400 mb-8">感謝您的跟團，系統已收到您的回應。<br>成團後會再另行通知。</p>
+            <button onclick="closeModal()" class="w-full bg-dark-700 hover:bg-dark-600 border border-gray-600 text-white font-bold py-3 px-4 rounded-xl transition hover:shadow-lg hover:border-gray-500">
+                關閉視窗
+            </button>
+        </div>
+    </div>
+
+    <!-- 隱藏的 iframe 用於接收表單提交結果 -->
+    <iframe name="hidden_iframe" id="hidden_iframe"></iframe>
+
+    <script>
+        var submitted = false;
+
+        // 當頁面載入完成後，綁定 iframe 的 onload 事件
+        document.addEventListener('DOMContentLoaded', function() {
+            var iframe = document.getElementById('hidden_iframe');
+            if (iframe) {
+                iframe.onload = function() {
+                    // 只有當表單真的已經提交 (submitted == true) 後，iframe 重新載入才顯示成功視窗
+                    if (submitted) {
+                        showSuccessModal();
+                    }
+                };
+            }
+            
+            // 禁止右鍵選單 (但在特定元素上允許)
+            document.oncontextmenu = function(e) {
+                // 如果目標元素或其父元素有 .select-text class，或是輸入框，則允許右鍵
+                if (e.target.closest('.select-text') || e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+                    return true;
+                }
+                return false; 
+            };
+            
+            // 禁止複製/剪下/貼上 (但在特定元素上允許)
+            document.oncopy = function(e) {
+                // 取得當前選取範圍
+                const selection = window.getSelection();
+                // 如果有選取文字，且選取範圍的起始點在允許選取的元素內，則允許複製
+                if (!selection.isCollapsed) {
+                    const anchor = selection.anchorNode;
+                    const element = anchor.nodeType === 3 ? anchor.parentElement : anchor; // 若是文字節點，取其父元素
+                    
+                    if (element.closest('.select-text') || 
+                        document.activeElement.tagName === 'INPUT' || 
+                        document.activeElement.tagName === 'TEXTAREA') {
+                        return true;
+                    }
+                }
+                return false; 
+            };
+
+            document.oncut = function(e) {
+                 if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                    return true;
+                }
+                return false;
+            };
+        });
+
+        function handleSubmit() {
+            var btn = document.getElementById('submitBtn');
+            
+            // 顯示 Loading
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loader"></span> PROCESSING...';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            submitted = true;
+            
+            // 如果驗證通過，表單會提交到 iframe
+            setTimeout(function() {
+                if(!submitted) { 
+                    // 驗證失敗處理 (此處僅為預留)
+                }
+            }, 100);
+        }
+
+        function showSuccessModal() {
+            var modal = document.getElementById('successModal');
+            var content = document.getElementById('modalContent');
+            var btn = document.getElementById('submitBtn');
+
+            // 恢復按鈕狀態
+            btn.innerHTML = '<span>提交團購單</span>';
+            btn.disabled = false;
+            btn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+            // 顯示 Modal
+            modal.classList.remove('hidden');
+            // 小延遲讓 display:block 生效後再加 opacity 動畫
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-90');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            var modal = document.getElementById('successModal');
+            var content = document.getElementById('modalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-90');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                // 清空表單
+                document.getElementById('groupBuyForm').reset();
+                submitted = false;
+                window.scrollTo(0, 0);
+            }, 300);
+        }
+    </script>
+</body>
+</html>
