@@ -105,35 +105,15 @@
             }
         }
 
-        // 表單送出相關處理
-        let isSubmitted = false;
-
+        // 表單送出相關處理 (全面改用 Fetch 非同步送出)
         function handleFormSubmit(e) {
+            e.preventDefault(); // 攔截原本的表單跳轉
+
             const inputTotal = document.getElementById('input-total');
             const finalTotal = inputTotal ? (parseInt(inputTotal.value) || 0) : 0;
             if (finalTotal === 0) {
                 alert("您尚未選擇任何商品！");
-                e.preventDefault();
                 return false;
-            }
-
-            // 處理日期格式 (Google 表單要求拆分為 _year, _month, _day)
-            const dateInput = document.querySelector('input[type="date"]');
-            if (dateInput && dateInput.value && dateInput.hasAttribute('name')) {
-                const parts = dateInput.value.split('-'); // 取得 [YYYY, MM, DD]
-                if (parts.length === 3) {
-                    const baseName = dateInput.name;
-                    const form = e.target;
-                    ['year', 'month', 'day'].forEach((suffix, idx) => {
-                        let hidden = document.createElement('input');
-                        hidden.type = 'hidden';
-                        hidden.name = `${baseName}_${suffix}`;
-                        hidden.value = parts[idx];
-                        form.appendChild(hidden);
-                    });
-                    // 移除原本的 name，避免格式不符被 Google 阻擋
-                    dateInput.removeAttribute('name');
-                }
             }
 
             const btn = document.getElementById('submitBtn');
@@ -141,26 +121,45 @@
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 訂單送出中...';
                 btn.disabled = true;
             }
-            isSubmitted = true;
-            
-            // 表單將會被 target 到隱藏的 iframe
-        }
 
-        // iframe 載入完畢（代表 Google 表單接收完成）
-        function handleIframeLoad() {
-            if (isSubmitted) {
-                // 隱藏原始表單，顯示成功畫面
-                const orderForm = document.getElementById('orderForm');
-                const successMessage = document.getElementById('successMessage');
-                if (orderForm) orderForm.style.display = 'none';
-                if (successMessage) successMessage.classList.remove('hidden');
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // 處理日期格式：相容 Google 表單的拆解年、月、日參數
+            const dateVal = formData.get('entry.488943979');
+            if (dateVal) {
+                const parts = dateVal.split('-'); // [YYYY, MM, DD]
+                if (parts.length === 3) {
+                    formData.append('entry.488943979_year', parts[0]);
+                    formData.append('entry.488943979_month', parts[1]);
+                    formData.append('entry.488943979_day', parts[2]);
+                }
+            }
+
+            // 透過原生 Fetch API 送出資料，無視跨網域安全阻擋問題
+            fetch(form.action, {
+                method: 'POST',
+                mode: 'no-cors', // 重要：避免 CORS 跨網域阻擋
+                body: formData
+            }).then(() => {
+                // 不論 API 回傳什麼，只要執行完成就視為送出成功
+                document.getElementById('orderForm').style.display = 'none';
+                const successMsg = document.getElementById('successMessage');
+                if (successMsg) successMsg.classList.remove('hidden');
                 
-                // 將畫面滾動到最上方
+                // 自動將畫面滾動到最上方
                 window.scrollTo({
                     top: 0,
                     behavior: 'smooth'
                 });
-            }
+            }).catch(error => {
+                console.error('送出異常:', error);
+                alert("連線異常，請確認您的網路狀態後再試一次。");
+                if (btn) {
+                    btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> 確認送出訂單';
+                    btn.disabled = false;
+                }
+            });
         }
 
         // 初始計算一次 (確保 DOM 載入後執行)
@@ -170,9 +169,6 @@
     </script>
 </head>
 <body class="bg-stone-100 text-gray-800 antialiased font-sans pb-20">
-
-    <!-- 用於攔截 Google 表單跳轉的隱藏 iframe -->
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
 
     <!-- 頂部橫幅 (Header) -->
     <header class="w-full h-64 md:h-80 bg-cover bg-center relative" style="background-image: url('https://lh7-rt.googleusercontent.com/formsz/AN7BsVCMiOWctmNHnTt08M_m20_2eajySYuvRL_-GrpwSE4BH0NWzlvK0NIrp3w8peiJX3etqHJwZLWDb3c_73TvEU7ULNATzVMkVnTCPnCddX7cldaDAbyKcC81WqyibeNFzpxUBvtBfSxQyDGXpwNx-DWe7nPnw5FE0ZKK62PAbZlFG93HmKS4LTMRDZphLTzH-MZ5kS5Hwg4JCHOOjLUL=w1078?key=AZ8BsH_zgbuHbknDQAfh6g');">
@@ -210,12 +206,14 @@
     </div>
 
     <!-- 主要表單區塊 -->
-    <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto mt-8 px-4" onsubmit="handleFormSubmit(event)">
+    <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" class="max-w-4xl mx-auto mt-8 px-4" onsubmit="handleFormSubmit(event)">
         
         <!-- Google 表單必備的隱藏驗證欄位 -->
         <input type="hidden" name="fvv" value="1">
+        <input type="hidden" name="partialResponse" value="[null,null,&quot;2824852592871526964&quot;]">
         <input type="hidden" name="pageHistory" value="0">
-        <input type="hidden" name="fbzx" value="8909396454533120144">
+        <input type="hidden" name="fbzx" value="2824852592871526964">
+        <input type="hidden" name="submissionTimestamp" value="-1">
 
         <!-- 步驟 1：基本資訊 -->
         <section class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
