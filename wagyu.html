@@ -26,9 +26,9 @@
         }
         
         .glass-card {
-            background: rgba(44, 25, 17, 0.7); /* 微調卡片底色以融入深褐色 */
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(249, 115, 22, 0.2);
+            background: transparent; /* 完全融入背景 */
+            border: none; /* 移除外圍線條分界 */
+            box-shadow: none; /* 移除區塊陰影 */
         }
 
         .focus-ring:focus-within {
@@ -39,12 +39,14 @@
 
         /* 活潑的懸浮互動：卡片上浮與橘紅光芒 */
         .product-card-hover {
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+            border: 1px solid transparent; /* 預設透明邊框，避免 hover 時跳動 */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease, background-color 0.4s ease;
         }
         .product-card-hover:hover {
             transform: translateY(-10px);
+            background-color: rgba(0, 0, 0, 0.3); /* 懸浮時才顯示微弱底色幫助閱讀 */
             box-shadow: 0 25px 50px -12px rgba(249, 115, 22, 0.4), 0 0 25px 0 rgba(239, 68, 68, 0.3);
-            border-color: rgba(249, 115, 22, 0.6);
+            border-color: rgba(249, 115, 22, 0.3);
         }
         
         /* 背景光暈脈動動畫 */
@@ -86,26 +88,25 @@
 
     <!-- 滿額活動公告 (花俏活潑版) -->
     <div class="max-w-4xl mx-auto px-4 -mt-16 md:-mt-20 relative z-20 mb-8">
-        <div class="bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-2xl shadow-[0_10px_40px_-10px_rgba(239,68,68,0.5)] p-1 transform transition-transform hover:scale-[1.01] animate-bounce-subtle">
-            <div class="bg-gray-900/90 backdrop-blur-sm rounded-xl p-5 md:p-7 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden border border-orange-500/30">
-                <!-- 裝飾光暈 -->
-                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-yellow-400/20 blur-3xl rounded-full"></div>
-                <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-32 h-32 bg-red-500/20 blur-3xl rounded-full"></div>
+        <div class="bg-black/10 backdrop-blur-sm rounded-2xl transform transition-transform hover:-translate-y-1">
+            <div class="p-5 md:p-7 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <!-- 裝飾光暈融入背景 -->
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-orange-500/10 blur-[80px] rounded-full pointer-events-none"></div>
 
                 <div class="flex items-center gap-5 relative z-10 w-full">
-                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-300 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
-                        <i class="ph-fill ph-gift text-3xl text-gray-900"></i>
+                    <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-gradient-to-br from-orange-400/20 to-yellow-300/10 border border-orange-500/30 flex items-center justify-center shadow-[0_0_15px_rgba(249,115,22,0.3)] shrink-0">
+                        <i class="ph-fill ph-gift text-3xl text-orange-400 drop-shadow-md"></i>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-black text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 mb-1">🎉 團購好康大放送 🎉</h3>
+                        <h3 class="font-black text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 mb-1 drop-shadow-sm tracking-wide">🎉 團購好康大放送 🎉</h3>
                         <div class="space-y-2 mt-2">
-                            <p class="text-white font-medium flex items-start gap-2 text-sm md:text-base">
-                                <i class="ph-fill ph-check-circle text-green-400 mt-0.5 md:mt-1"></i>
-                                <span>單筆訂單滿 <span class="text-xl md:text-2xl font-black text-yellow-300 mx-1">1299</span> <span class="text-orange-300 font-bold">免運！</span><span class="text-gray-400 text-xs md:text-sm font-normal ml-1">(未滿需加 200 元冷凍運費)</span></span>
+                            <p class="text-gray-100 font-medium flex items-start gap-2 text-sm md:text-base">
+                                <i class="ph-fill ph-check-circle text-orange-400 mt-0.5 md:mt-1 drop-shadow-sm"></i>
+                                <span>單筆訂單滿 <span class="text-xl md:text-2xl font-black text-yellow-300 mx-1 drop-shadow-sm">1299</span> <span class="text-orange-300 font-bold drop-shadow-sm">免運！</span><span class="text-gray-400 text-xs md:text-sm font-normal ml-1">(未滿需加 200 元冷凍運費)</span></span>
                             </p>
-                            <p class="text-white font-medium flex items-start gap-2 text-sm md:text-base">
-                                <i class="ph-fill ph-check-circle text-green-400 mt-0.5 md:mt-1"></i>
-                                <span>單筆消費滿 <span class="text-xl md:text-2xl font-black text-yellow-300 mx-1">1800</span> 元，即贈送<span class="text-orange-300 font-bold ml-1">「紅燒牛舌 1 包」🎁</span></span>
+                            <p class="text-gray-100 font-medium flex items-start gap-2 text-sm md:text-base">
+                                <i class="ph-fill ph-check-circle text-orange-400 mt-0.5 md:mt-1 drop-shadow-sm"></i>
+                                <span>單筆消費滿 <span class="text-xl md:text-2xl font-black text-yellow-300 mx-1 drop-shadow-sm">1800</span> 元，即贈送<span class="text-orange-300 font-bold ml-1 drop-shadow-sm">「紅燒牛舌 1 包」🎁</span></span>
                             </p>
                         </div>
                     </div>
@@ -118,8 +119,8 @@
     <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto px-4 py-4 space-y-8" onsubmit="return handleFormSubmit()">
         
         <!-- 區塊 1：基本資料 -->
-        <section class="glass-card rounded-2xl p-6 md:p-8 shadow-lg">
-            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
+        <section class="glass-card rounded-2xl p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 mb-6 flex items-center gap-2 drop-shadow-md">
                 <i class="ph-fill ph-user-circle"></i> 訂購人資訊
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -130,38 +131,41 @@
                     </div>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">FB名稱 <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 ml-1">
+                        <label class="text-base md:text-lg font-semibold text-gray-200">FB名稱 <span class="text-red-500">*</span></label>
+                        <span class="text-sm text-gray-400">請輸入您的Facebook名稱</span>
+                    </div>
                     <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
-                        <input type="text" name="entry.716533617" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors" placeholder="請輸入您的Facebook名稱">
+                        <input type="text" name="entry.716533617" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors" placeholder="您的Facebook名稱">
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- 區塊 2：精選商品 (有圖片) -->
-        <section class="glass-card rounded-2xl p-6 md:p-8 shadow-lg">
-            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
+        <section class="glass-card rounded-2xl p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 mb-6 flex items-center gap-2 drop-shadow-md">
                 <i class="ph-fill ph-shopping-bag"></i> 商品選購
             </h2>
             
             <div class="space-y-8">
             <div class="space-y-6">
                 <!-- 商品 1 -->
-                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                <div class="flex flex-col md:flex-row rounded-xl overflow-hidden product-card-hover group relative z-10">
                     <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
                         <img src="https://img.shoplineapp.com/media/image_clips/6a1e77c4007fed09e6be246e/original.jpeg?1780381635=&owner_id=60409434dead4b0018277691" alt="厚切牛舌" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
-                                <div class="flex items-center gap-2">
-                                    <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">限量澳洲厚切牛舌</h3>
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-2 gap-2">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <h3 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 drop-shadow-sm">限量澳洲厚切牛舌</h3>
+                                    <span class="text-sm md:text-base text-gray-400 font-normal tracking-wide">300g/包（±5%）</span>
                                     <span class="bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded shadow-[0_0_8px_rgba(239,68,68,0.8)] border border-red-400 animate-pulse tracking-wider whitespace-nowrap">🔥 熱銷</span>
                                 </div>
                                 <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 660 元</span>
                             </div>
-                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">300g/包（±5%）</p>
-                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1 mt-2">
                                 澳洲和牛牛舌保有牛舌最經典的Q脆口感，但多了一層更細膩的油脂與香氣尾韻<br>
                                 頂級油花，不僅讓澳洲牛舌更為耐煎！熟度也更好掌握！<br>
                                 即便是料理小白，也能輕易料理<br>
@@ -187,18 +191,20 @@
                 </div>
 
                 <!-- 商品 2 -->
-                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                <div class="flex flex-col md:flex-row rounded-xl overflow-hidden product-card-hover group relative z-10">
                     <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
                         <img src="https://shoplineimg.com/60409434dead4b0018277691/6a0fcb7d59e28ea8122880a4/800x.webp?source_format=jpg" alt="薄切牛舌" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
-                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">澳洲和牛薄切牛舌</h3>
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-2 gap-2">
+                                <div class="flex flex-wrap items-baseline gap-2">
+                                    <h3 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 drop-shadow-sm">澳洲和牛薄切牛舌</h3>
+                                    <span class="text-sm md:text-base text-gray-400 font-normal tracking-wide">300g/包（±5%）</span>
+                                </div>
                                 <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 620 元</span>
                             </div>
-                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">300g/包（±5%）</p>
-                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1 mt-2">
                                 Q彈脆爽的經典牛舌口感依然迷人<br>
                                 撒點鹽巴、配上蔥鹽醬，再來一口泡菜<br>
                                 層次直接拉滿，讓人忍不住一片接一片！<br>
@@ -221,18 +227,20 @@
                 </div>
 
                 <!-- 商品 3 -->
-                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                <div class="flex flex-col md:flex-row rounded-xl overflow-hidden product-card-hover group relative z-10">
                     <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
                         <img src="https://shoplineimg.com/60409434dead4b0018277691/661766cd84260b0011fa4bee/800x.webp?source_format=jpg" alt="橫膈牛排" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
-                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">橫膈牛排 (美國)</h3>
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-2 gap-2">
+                                <div class="flex flex-wrap items-baseline gap-2">
+                                    <h3 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 drop-shadow-sm">橫膈牛排 (美國)</h3>
+                                    <span class="text-sm md:text-base text-gray-400 font-normal tracking-wide">300g/包（±10%）</span>
+                                </div>
                                 <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 490 元</span>
                             </div>
-                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">300g/包（±10%）</p>
-                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1 mt-2">
                                 很多燒肉店，會把橫膈膜的油脂修得很乾淨。<br>
                                 但香氣，也一起修掉了。<br>
                                 我們刻意保留部分油脂，就是想留下橫膈牛排最迷人的味道。<br><br>
@@ -254,18 +262,20 @@
                 </div>
 
                 <!-- 商品 4 -->
-                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                <div class="flex flex-col md:flex-row rounded-xl overflow-hidden product-card-hover group relative z-10">
                     <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
                         <img src="https://shoplineimg.com/60409434dead4b0018277691/6644746b89cf800016c5d600/800x.webp?source_format=jpg" alt="日式醬油胖翅" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
-                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">日式醬油胖翅</h3>
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-2 gap-2">
+                                <div class="flex flex-wrap items-baseline gap-2">
+                                    <h3 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 drop-shadow-sm">日式醬油胖翅</h3>
+                                    <span class="text-sm md:text-base text-gray-400 font-normal tracking-wide">500g/包</span>
+                                </div>
                                 <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 380 元</span>
                             </div>
-                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">500g/包</p>
-                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1 mt-2">
                                 不吃辣的朋友有新選擇啦！<br>
                                 選用肥美的翅中部位，以日式醬油完美醃製<br>
                                 只需190度烘烤15~20分鐘！<br>
@@ -288,18 +298,20 @@
                 </div>
 
                 <!-- 商品 5 -->
-                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                <div class="flex flex-col md:flex-row rounded-xl overflow-hidden product-card-hover group relative z-10">
                     <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
                         <img src="https://shoplineimg.com/60409434dead4b0018277691/641a9c05fb1f9b001cdd975d/800x.webp?source_format=jpg" alt="椒麻胖翅" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
-                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">椒麻胖翅</h3>
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-2 gap-2">
+                                <div class="flex flex-wrap items-baseline gap-2">
+                                    <h3 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 drop-shadow-sm">椒麻胖翅</h3>
+                                    <span class="text-sm md:text-base text-gray-400 font-normal tracking-wide">500g/包</span>
+                                </div>
                                 <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 380 元</span>
                             </div>
-                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">500g/包</p>
-                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1 mt-2">
                                 選用肥美的翅中部位，以麻辣醬完美醃製<br>
                                 每口都能感受到陣陣的麻辣香，但卻不會太辣！<br>
                                 保證絕對會想來手啤酒！涮嘴啊～<br><br>
@@ -321,18 +333,20 @@
                 </div>
 
                 <!-- 商品 6 -->
-                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                <div class="flex flex-col md:flex-row rounded-xl overflow-hidden product-card-hover group relative z-10">
                     <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
                         <img src="https://cdn.phototourl.com/free/2026-06-12-d92306b7-8df8-45fe-ac81-a4dac964959e.jpg" alt="紅燒牛舌" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
-                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">紅燒牛舌 (紐西蘭)</h3>
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-start mb-2 gap-2">
+                                <div class="flex flex-wrap items-baseline gap-2">
+                                    <h3 class="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 drop-shadow-sm">紅燒牛舌 (紐西蘭)</h3>
+                                    <span class="text-sm md:text-base text-gray-400 font-normal tracking-wide drop-shadow-sm">500g/包（±10%）</span>
+                                </div>
                                 <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 260 元</span>
                             </div>
-                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">500g/包（±10%）</p>
-                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1 mt-2 drop-shadow-sm">
                                 慢火燉煮成紅燒風味<br>
                                 口感像牛腱般軟嫩好咬<br>
                                 濃郁鹹香的醬汁自依個人喜好加上喜歡的麵條<br>
@@ -342,8 +356,8 @@
                                 <span class="text-orange-200">肉品來源：</span>紐西蘭
                             </div>
                         </div>
-                        <div class="mt-5 flex items-center justify-end gap-3 border-t border-gray-700/50 pt-4">
-                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                        <div class="mt-5 flex items-center justify-end gap-3 pt-4">
+                            <span class="text-gray-300 font-medium text-lg drop-shadow-md">訂購包數：</span>
                             <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
                                 <button type="button" onclick="updateQty('prod6', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
                                 <input type="number" id="prod6" name="entry.1243317079" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="260">
@@ -357,8 +371,8 @@
         </section>
 
         <!-- 區塊 3：收件與匯款資訊 -->
-        <section class="glass-card rounded-2xl p-6 md:p-8 shadow-lg">
-            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
+        <section class="glass-card rounded-2xl p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 mb-6 flex items-center gap-2 drop-shadow-md">
                 <i class="ph-fill ph-truck"></i> 收件與匯款資訊
             </h2>
             
