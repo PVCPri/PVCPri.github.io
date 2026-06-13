@@ -1,473 +1,444 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.7">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #164fc7; -webkit-text-stroke: #164fc7}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #115d3e; -webkit-text-stroke: #115d3e}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #855504; -webkit-text-stroke: #855504}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #2e3133; -webkit-text-stroke: #2e3133}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #888f95; -webkit-text-stroke: #888f95}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 14.0px Menlo; color: #2e3133; -webkit-text-stroke: #2e3133; min-height: 16.0px}
-    span.s1 {font-kerning: none; background-color: #ffffff}
-    span.s2 {font-kerning: none; color: #2e3133; background-color: #ffffff; -webkit-text-stroke: 0px #2e3133}
-    span.s3 {font-kerning: none; color: #4d5055; background-color: #ffffff; -webkit-text-stroke: 0px #4d5055}
-    span.s4 {font-kerning: none; color: #164fc7; background-color: #ffffff; -webkit-text-stroke: 0px #164fc7}
-    span.s5 {font-kerning: none; color: #855504; background-color: #ffffff; -webkit-text-stroke: 0px #855504}
-    span.s6 {font-kerning: none; color: #115d3e; background-color: #ffffff; -webkit-text-stroke: 0px #115d3e}
-    span.s7 {font-kerning: none; color: #888f95; background-color: #ffffff; -webkit-text-stroke: 0px #888f95}
-    span.s8 {font-kerning: none; color: #6624a5; background-color: #ffffff; -webkit-text-stroke: 0px #6624a5}
-    span.s9 {font-kerning: none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>精選夯牛商品｜團購訂購單</title>
+    <!-- 使用 Tailwind CSS 作為樣式框架 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#dc4a00', // 符合原本表單的主色調
+                            900: '#7c2d12',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- 引入 FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 隱藏原生數字輸入框的上下箭頭 */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+    <script>
+        // 增減數量的便捷按鈕腳本
+        function updateQty(inputId, change) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            let currentVal = parseInt(input.value) || 0;
+            let newVal = currentVal + change;
+            if (newVal < 0) newVal = 0;
+            input.value = newVal;
+            calculateTotal(); // 觸發計算
+        }
+
+        // 自動計算總金額與運費腳本
+        function calculateTotal() {
+            let total = 0;
+            const items = document.querySelectorAll('.product-qty');
+            
+            // 計算小計
+            items.forEach(item => {
+                const qty = parseInt(item.value) || 0;
+                const price = parseInt(item.dataset.price) || 0;
+                total += (qty * price);
+            });
+            
+            // 計算運費 (未滿 1299 收 200)
+            let shipping = 0;
+            if (total > 0 && total < 1299) {
+                shipping = 200;
+            }
+            
+            // 滿額贈品提示 (滿 1800)
+            const promoEl = document.getElementById('promo-message');
+            if (promoEl) {
+                if (total >= 1800) {
+                    promoEl.classList.remove('hidden');
+                } else {
+                    promoEl.classList.add('hidden');
+                }
+            }
+            
+            // 總計
+            const finalTotal = total + shipping;
+            
+            // 更新 UI 顯示
+            const displaySubtotal = document.getElementById('display-subtotal');
+            const displayShipping = document.getElementById('display-shipping');
+            const displayTotal = document.getElementById('display-total');
+            const inputTotal = document.getElementById('input-total');
+
+            if (displaySubtotal) displaySubtotal.innerText = total.toLocaleString();
+            if (displayShipping) displayShipping.innerText = shipping.toLocaleString();
+            if (displayTotal) displayTotal.innerText = finalTotal.toLocaleString();
+            
+            // 寫入傳送至 Google 表單的隱藏 Input
+            if (inputTotal) {
+                inputTotal.value = finalTotal > 0 ? finalTotal : '';
+                
+                // 同時觸發 HTML5 Required 驗證重置
+                if(finalTotal > 0) {
+                    inputTotal.setCustomValidity("");
+                }
+            }
+        }
+
+        // 表單送出相關處理
+        let isSubmitted = false;
+
+        function handleFormSubmit(e) {
+            const inputTotal = document.getElementById('input-total');
+            const finalTotal = inputTotal ? (parseInt(inputTotal.value) || 0) : 0;
+            if (finalTotal === 0) {
+                alert("您尚未選擇任何商品！");
+                e.preventDefault();
+                return false;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 訂單送出中...';
+                btn.disabled = true;
+            }
+            isSubmitted = true;
+            
+            // 表單將會被 target 到隱藏的 iframe
+        }
+
+        // iframe 載入完畢（代表 Google 表單接收完成）
+        function handleIframeLoad() {
+            if (isSubmitted) {
+                // 隱藏原始表單，顯示成功畫面
+                const orderForm = document.getElementById('orderForm');
+                const successMessage = document.getElementById('successMessage');
+                if (orderForm) orderForm.style.display = 'none';
+                if (successMessage) successMessage.classList.remove('hidden');
+                
+                // 將畫面滾動到最上方
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // 初始計算一次 (確保 DOM 載入後執行)
+        document.addEventListener('DOMContentLoaded', function() {
+            calculateTotal();
+        });
+    </script>
 </head>
-<body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE</span><span class="s2"> html</span><span class="s1">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s4">html</span><span class="s2"> </span><span class="s5">lang</span><span class="s3">=</span><span class="s1">"zh-TW"</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">meta</span><span class="s2"> </span><span class="s1">charset</span><span class="s3">=</span><span class="s6">"UTF-8"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">meta</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"viewport"</span><span class="s2"> </span><span class="s5">content</span><span class="s3">=</span><span class="s1">"width=device-width, initial-scale=1.0"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">title</span><span class="s3">&gt;</span><span class="s1">精選夯牛商品｜團購訂購單</span><span class="s3">&lt;/</span><span class="s4">title</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 使用 Tailwind CSS 作為樣式框架 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">script</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://cdn.tailwindcss.com"</span><span class="s3">&gt;&lt;/</span><span class="s4">script</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>tailwind</span><span class="s3">.</span><span class="s1">config </span><span class="s3">=</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>theme</span><span class="s3">:</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>extend</span><span class="s3">:</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>colors</span><span class="s3">:</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span>brand</span><span class="s3">:</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s5">50</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'#fff7ed'</span><span class="s3">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s5">100</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'#ffedd5'</span><span class="s3">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s5">500</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'#f97316'</span><span class="s3">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s5">600</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'#ea580c'</span><span class="s3">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s5">700</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'#dc4a00'</span><span class="s3">,</span><span class="s1"> </span><span class="s7">// 符合原本表單的主色調</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s5">900</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'#7c2d12'</span><span class="s3">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 引入 FontAwesome 圖示 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">link</span><span class="s2"> </span><span class="s5">rel</span><span class="s3">=</span><span class="s1">"stylesheet"</span><span class="s2"> </span><span class="s5">href</span><span class="s3">=</span><span class="s1">"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">/* 隱藏原生數字輸入框的上下箭頭 */</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">input</span><span class="s3">[</span><span class="s6">type</span><span class="s3">=</span><span class="s6">number</span><span class="s3">]</span><span class="s1">::-webkit-inner-spin-button</span><span class="s3">,</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">input</span><span class="s3">[</span><span class="s6">type</span><span class="s3">=</span><span class="s6">number</span><span class="s3">]</span><span class="s1">::-webkit-outer-spin-button</span><span class="s2"> </span><span class="s3">{</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">-webkit-appearance:</span><span class="s2"> </span><span class="s6">none</span><span class="s3">;</span><span class="s2"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s5">margin:</span><span class="s1"> </span><span class="s6">0</span><span class="s3">;</span><span class="s1"><span class="Apple-converted-space"> </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s4">input</span><span class="s3">[</span><span class="s1">type</span><span class="s3">=</span><span class="s1">number</span><span class="s3">]</span><span class="s2"> </span><span class="s3">{</span></p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">-moz-appearance:</span><span class="s2"> </span><span class="s6">textfield</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">.glass-panel</span><span class="s2"> </span><span class="s3">{</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s5">background:</span><span class="s2"> </span><span class="s1">rgba(255</span><span class="s3">,</span><span class="s2"> </span><span class="s1">255</span><span class="s3">,</span><span class="s2"> </span><span class="s1">255</span><span class="s3">,</span><span class="s2"> </span><span class="s1">0.95)</span><span class="s3">;</span></p>
-<p class="p3"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">backdrop-filter:</span><span class="s2"> </span><span class="s6">blur(10px)</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">style</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">// 增減數量的便捷按鈕腳本</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">function</span><span class="s1"> updateQty</span><span class="s3">(</span><span class="s1">inputId</span><span class="s3">,</span><span class="s1"> change</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> input </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s1">inputId</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(!</span><span class="s1">input</span><span class="s3">)</span><span class="s1"> </span><span class="s8">return</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">let</span><span class="s1"> currentVal </span><span class="s3">=</span><span class="s1"> parseInt</span><span class="s3">(</span><span class="s1">input</span><span class="s3">.</span><span class="s1">value</span><span class="s3">)</span><span class="s1"> </span><span class="s3">||</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">let</span><span class="s1"> newVal </span><span class="s3">=</span><span class="s1"> currentVal </span><span class="s3">+</span><span class="s1"> change</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">newVal </span><span class="s3">&lt;</span><span class="s1"> </span><span class="s5">0</span><span class="s3">)</span><span class="s1"> newVal </span><span class="s3">=</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>input</span><span class="s3">.</span><span class="s1">value </span><span class="s3">=</span><span class="s1"> newVal</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>calculateTotal</span><span class="s3">();</span><span class="s1"> </span><span class="s7">// 觸發計算</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">// 自動計算總金額與運費腳本</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">function</span><span class="s1"> calculateTotal</span><span class="s3">()</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">let</span><span class="s1"> total </span><span class="s3">=</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> items </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">querySelectorAll</span><span class="s3">(</span><span class="s6">'.product-qty'</span><span class="s3">);</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s7">// 計算小計</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>items</span><span class="s3">.</span><span class="s1">forEach</span><span class="s3">(</span><span class="s1">item </span><span class="s3">=&gt;</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">const</span><span class="s1"> qty </span><span class="s3">=</span><span class="s1"> parseInt</span><span class="s3">(</span><span class="s1">item</span><span class="s3">.</span><span class="s1">value</span><span class="s3">)</span><span class="s1"> </span><span class="s3">||</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">const</span><span class="s1"> price </span><span class="s3">=</span><span class="s1"> parseInt</span><span class="s3">(</span><span class="s1">item</span><span class="s3">.</span><span class="s1">dataset</span><span class="s3">.</span><span class="s1">price</span><span class="s3">)</span><span class="s1"> </span><span class="s3">||</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>total </span><span class="s3">+=</span><span class="s1"> </span><span class="s3">(</span><span class="s1">qty </span><span class="s3">*</span><span class="s1"> price</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">});</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">// 計算運費 (未滿 1299 收 200)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">let</span><span class="s1"> shipping </span><span class="s3">=</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">total </span><span class="s3">&gt;</span><span class="s1"> </span><span class="s5">0</span><span class="s1"> </span><span class="s3">&amp;&amp;</span><span class="s1"> total </span><span class="s3">&lt;</span><span class="s1"> </span><span class="s5">1299</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>shipping </span><span class="s3">=</span><span class="s1"> </span><span class="s5">200</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">// 滿額贈品提示 (滿 1800)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> promoEl </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'promo-message'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">promoEl</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">total </span><span class="s3">&gt;=</span><span class="s1"> </span><span class="s5">1800</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>promoEl</span><span class="s3">.</span><span class="s1">classList</span><span class="s3">.</span><span class="s1">remove</span><span class="s3">(</span><span class="s6">'hidden'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">}</span><span class="s1"> </span><span class="s8">else</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>promoEl</span><span class="s3">.</span><span class="s1">classList</span><span class="s3">.</span><span class="s1">add</span><span class="s3">(</span><span class="s6">'hidden'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s7">// 總計</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> finalTotal </span><span class="s3">=</span><span class="s1"> total </span><span class="s3">+</span><span class="s1"> shipping</span><span class="s3">;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s7">// 更新 UI 顯示</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> displaySubtotal </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'display-subtotal'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> displayShipping </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'display-shipping'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> displayTotal </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'display-total'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> inputTotal </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'input-total'</span><span class="s3">);</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">displaySubtotal</span><span class="s3">)</span><span class="s1"> displaySubtotal</span><span class="s3">.</span><span class="s1">innerText </span><span class="s3">=</span><span class="s1"> total</span><span class="s3">.</span><span class="s1">toLocaleString</span><span class="s3">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">displayShipping</span><span class="s3">)</span><span class="s1"> displayShipping</span><span class="s3">.</span><span class="s1">innerText </span><span class="s3">=</span><span class="s1"> shipping</span><span class="s3">.</span><span class="s1">toLocaleString</span><span class="s3">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">displayTotal</span><span class="s3">)</span><span class="s1"> displayTotal</span><span class="s3">.</span><span class="s1">innerText </span><span class="s3">=</span><span class="s1"> finalTotal</span><span class="s3">.</span><span class="s1">toLocaleString</span><span class="s3">();</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">// 寫入傳送至 Google 表單的隱藏 Input</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">inputTotal</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>inputTotal</span><span class="s3">.</span><span class="s1">value </span><span class="s3">=</span><span class="s1"> finalTotal </span><span class="s3">&gt;</span><span class="s1"> </span><span class="s5">0</span><span class="s1"> </span><span class="s3">?</span><span class="s1"> finalTotal </span><span class="s3">:</span><span class="s1"> </span><span class="s6">''</span><span class="s3">;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s1">// 同時觸發 HTML5 Required 驗證重置</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">if</span><span class="s3">(</span><span class="s1">finalTotal </span><span class="s3">&gt;</span><span class="s1"> </span><span class="s5">0</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>inputTotal</span><span class="s3">.</span><span class="s1">setCustomValidity</span><span class="s3">(</span><span class="s6">""</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">// 表單送出相關處理</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">let</span><span class="s1"> isSubmitted </span><span class="s3">=</span><span class="s1"> </span><span class="s8">false</span><span class="s3">;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">function</span><span class="s1"> handleFormSubmit</span><span class="s3">(</span><span class="s1">e</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> inputTotal </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'input-total'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> finalTotal </span><span class="s3">=</span><span class="s1"> inputTotal </span><span class="s3">?</span><span class="s1"> </span><span class="s3">(</span><span class="s1">parseInt</span><span class="s3">(</span><span class="s1">inputTotal</span><span class="s3">.</span><span class="s1">value</span><span class="s3">)</span><span class="s1"> </span><span class="s3">||</span><span class="s1"> </span><span class="s5">0</span><span class="s3">)</span><span class="s1"> </span><span class="s3">:</span><span class="s1"> </span><span class="s5">0</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">finalTotal </span><span class="s3">===</span><span class="s1"> </span><span class="s5">0</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>alert</span><span class="s3">(</span><span class="s6">"您尚未選擇任何商品！"</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>e</span><span class="s3">.</span><span class="s1">preventDefault</span><span class="s3">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">return</span><span class="s1"> </span><span class="s8">false</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">const</span><span class="s1"> btn </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'submitBtn'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">btn</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span>btn</span><span class="s3">.</span><span class="s2">innerHTML </span><span class="s3">=</span><span class="s2"> </span><span class="s1">'&lt;i class="fas fa-spinner fa-spin mr-2"&gt;&lt;/i&gt; 訂單送出中...'</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>btn</span><span class="s3">.</span><span class="s1">disabled </span><span class="s3">=</span><span class="s1"> </span><span class="s8">true</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>isSubmitted </span><span class="s3">=</span><span class="s1"> </span><span class="s8">true</span><span class="s3">;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s1">// 表單將會被 target 到隱藏的 iframe</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">// iframe 載入完畢（代表 Google 表單接收完成）</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s8">function</span><span class="s1"> handleIframeLoad</span><span class="s3">()</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">isSubmitted</span><span class="s3">)</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">// 隱藏原始表單，顯示成功畫面</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">const</span><span class="s1"> orderForm </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'orderForm'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">const</span><span class="s1"> successMessage </span><span class="s3">=</span><span class="s1"> document</span><span class="s3">.</span><span class="s1">getElementById</span><span class="s3">(</span><span class="s6">'successMessage'</span><span class="s3">);</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">orderForm</span><span class="s3">)</span><span class="s1"> orderForm</span><span class="s3">.</span><span class="s1">style</span><span class="s3">.</span><span class="s1">display </span><span class="s3">=</span><span class="s1"> </span><span class="s6">'none'</span><span class="s3">;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s8">if</span><span class="s1"> </span><span class="s3">(</span><span class="s1">successMessage</span><span class="s3">)</span><span class="s1"> successMessage</span><span class="s3">.</span><span class="s1">classList</span><span class="s3">.</span><span class="s1">remove</span><span class="s3">(</span><span class="s6">'hidden'</span><span class="s3">);</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">                </span></span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">// 將畫面滾動到最上方</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>window</span><span class="s3">.</span><span class="s1">scrollTo</span><span class="s3">({</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>top</span><span class="s3">:</span><span class="s1"> </span><span class="s5">0</span><span class="s3">,</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>behavior</span><span class="s3">:</span><span class="s1"> </span><span class="s6">'smooth'</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">});</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">}</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">}</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">// 初始計算一次 (確保 DOM 載入後執行)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span>document</span><span class="s3">.</span><span class="s1">addEventListener</span><span class="s3">(</span><span class="s6">'DOMContentLoaded'</span><span class="s3">,</span><span class="s1"> </span><span class="s8">function</span><span class="s3">()</span><span class="s1"> </span><span class="s3">{</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span>calculateTotal</span><span class="s3">();</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">});</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">script</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;/</span><span class="s1">head</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s3">&lt;</span><span class="s4">body</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-stone-100 text-gray-800 antialiased font-sans pb-20"</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 用於攔截 Google 表單跳轉的隱藏 iframe --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">iframe</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"hidden_iframe"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"hidden_iframe"</span><span class="s2"> </span><span class="s5">style</span><span class="s3">=</span><span class="s1">"display:none;"</span><span class="s2"> </span><span class="s5">onload</span><span class="s3">=</span><span class="s1">"handleIframeLoad()"</span><span class="s3">&gt;&lt;/</span><span class="s4">iframe</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 頂部橫幅 (Header) --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">header</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-64 md:h-80 bg-cover bg-center relative"</span><span class="s2"> </span><span class="s5">style</span><span class="s3">=</span><span class="s1">"background-image: url('https://lh7-rt.googleusercontent.com/formsz/AN7BsVCMiOWctmNHnTt08M_m20_2eajySYuvRL_-GrpwSE4BH0NWzlvK0NIrp3w8peiJX3etqHJwZLWDb3c_73TvEU7ULNATzVMkVnTCPnCddX7cldaDAbyKcC81WqyibeNFzpxUBvtBfSxQyDGXpwNx-DWe7nPnw5FE0ZKK62PAbZlFG93HmKS4LTMRDZphLTzH-MZ5kS5Hwg4JCHOOjLUL=w1078?key=AZ8BsH_zgbuHbknDQAfh6g');"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"absolute inset-0 bg-black bg-opacity-40"</span><span class="s3">&gt;&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"absolute inset-0 flex flex-col items-center justify-center text-center px-4"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">h1</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-4xl md:text-5xl font-bold text-white mb-4 tracking-wider text-shadow-md"</span><span class="s3">&gt;</span><span class="s2">精選夯牛商品</span><span class="s3">&lt;/</span><span class="s4">h1</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"glass-panel px-6 py-4 rounded-lg shadow-lg max-w-2xl text-left border-l-4 border-brand-500"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-gray-800 font-medium mb-1"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-bullhorn text-brand-600 mr-2"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span><span class="s2">請詳閱主揪文說明</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-gray-800 font-medium mb-1"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-money-check-alt text-brand-600 mr-2"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span><span class="s2">收款帳戶：台灣銀行(004) 034001008368</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-600 mt-2 border-t pt-2"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold"</span><span class="s3">&gt;</span><span class="s1">優惠快報：</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span><span class="s1">單筆滿 1299 免運 (未滿冷凍運費 200元)</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span>單筆消費滿 1800 元，加碼送「紅燒牛舌 1包」！</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s1">header</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 成功送出後的感謝畫面 (預設隱藏) --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"successMessage"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"hidden max-w-3xl mx-auto mt-12 px-4"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-xl p-10 text-center border-t-8 border-green-500"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-check text-4xl text-green-500"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">h2</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-3xl font-bold text-gray-800 mb-4"</span><span class="s3">&gt;</span><span class="s2">訂購成功！</span><span class="s3">&lt;/</span><span class="s4">h2</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-lg text-gray-600 mb-6"</span><span class="s3">&gt;</span><span class="s1">感謝您的訂購，我們已經收到您的表單資料。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span><span class="s1">請記得於期限內完成匯款，以免影響出貨進度喔！</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-gray-50 p-4 rounded-lg inline-block text-left mb-8"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">匯款資訊備忘：</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-gray-600"</span><span class="s3">&gt;</span><span class="s1">台灣銀行 (004) 034001008368</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"window.location.reload()"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"px-8 py-3 bg-brand-600 text-white font-bold rounded-full hover:bg-brand-700 transition shadow-lg"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span>返回重新填寫</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s1">&lt;!-- 主要表單區塊 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;</span><span class="s4">form</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"orderForm"</span><span class="s2"> </span><span class="s5">action</span><span class="s3">=</span><span class="s1">"https://docs.google.com/forms/u/1/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse"</span><span class="s2"> </span><span class="s5">method</span><span class="s3">=</span><span class="s1">"POST"</span><span class="s2"> </span><span class="s5">target</span><span class="s3">=</span><span class="s1">"hidden_iframe"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"max-w-4xl mx-auto mt-8 px-4"</span><span class="s2"> </span><span class="s5">onsubmit</span><span class="s3">=</span><span class="s1">"handleFormSubmit(event)"</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- 步驟 1：基本資訊 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">section</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden mb-8"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-brand-50 px-6 py-4 border-b border-brand-100 flex items-center"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-brand-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3"</span><span class="s3">&gt;</span><span class="s2">1</span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">h2</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-xl font-bold text-brand-900"</span><span class="s3">&gt;</span><span class="s2">訂購人基本資訊</span><span class="s3">&lt;/</span><span class="s4">h2</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"p-6 grid grid-cols-1 md:grid-cols-2 gap-6"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">電子郵件 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"email"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"emailAddress"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"example@email.com"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">FB名稱 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"text"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1404869440"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"您在 Facebook 的名稱"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">section</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- 步驟 2：商品選購 --&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">section</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"mb-8"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center mb-6 px-2"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-brand-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3 shadow-md"</span><span class="s3">&gt;</span><span class="s2">2</span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">h2</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-2xl font-bold text-gray-800"</span><span class="s3">&gt;</span><span class="s2">挑選精選商品</span><span class="s3">&lt;/</span><span class="s4">h2</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s1"><span class="Apple-converted-space">            </span></span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"grid grid-cols-1 md:grid-cols-2 gap-6"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">&lt;!-- 商品 1 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">img</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://lh7-rt.googleusercontent.com/formsz/AN7BsVArmEENtXP_5RSvkBlu8KF34kZZHxhGew1NCOEpjTDV9LKy3huR-_bPVjfd384qWKhPlsQz43GYAytU8n0WhFxyyJA3zLJ8f_KbgvAHdrFNCrHLY-MhKLqkeV2LdYYBmIfTeYoQGrGOlnrj0Tc_CSoTRBOdezPDJV2HPATIydx8FFzW4xFzyeDPtfaIUqOc8dEABWGVmn7KEUOntLg=w740?key=AZ8BsH_zgbuHbknDQAfh6g"</span><span class="s2"> </span><span class="s5">alt</span><span class="s3">=</span><span class="s1">"限量澳洲厚切牛舌"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-48 object-cover"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-5"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex justify-between items-start mb-2"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-lg font-bold text-gray-800"</span><span class="s3">&gt;</span><span class="s1">限量澳洲厚切牛舌</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded"</span><span class="s3">&gt;</span><span class="s2">熱銷</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold mb-3"</span><span class="s3">&gt;</span><span class="s1">300g/包 (±5%)｜團購價 $660</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>澳洲和牛牛舌保有牛舌最經典的Q脆口感，但多了一層更細膩的油脂與香氣尾韻。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>頂級油花，不僅讓澳洲牛舌更為耐煎！熟度也更好掌握！即使是料理小白也能輕易料理。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>兩面各煎30~40秒，外表微焦，一刀切開肉質依然粉嫩！沾鹽巴或檸檬都很搭！</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center justify-between mt-auto pt-4 border-t border-gray-100"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">購買包數 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center bg-gray-100 rounded-lg p-1"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty1', -1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-minus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"qty1"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.2057394052"</span><span class="s2"> </span><span class="s5">value</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">min</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"product-qty w-12 text-center bg-transparent font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">data-price</span><span class="s3">=</span><span class="s1">"660"</span><span class="s2"> </span><span class="s5">oninput</span><span class="s3">=</span><span class="s1">"calculateTotal()"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty1', 1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-plus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">&lt;!-- 商品 2 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">img</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://lh7-rt.googleusercontent.com/formsz/AN7BsVDF7QQvwM0Xcon0XG-QR2ogfRt-cvc9eVqv1K7OGALR9NGyUHXYVEEsujQErHbA05Mc52qu64ec4Dfn-mZdj_8JcVBIRZucxENKSD-pp7DYsxe248xuiiUbPY9h2SHbPHHNx64qKY50AntMFBnS9XJHG5SDbMYiPkn2ZjHeCFFyaZiPVugyz3LAfVHsrdCdC1nZCwMjLU_K6g5jMiA=w740?key=AZ8BsH_zgbuHbknDQAfh6g"</span><span class="s2"> </span><span class="s5">alt</span><span class="s3">=</span><span class="s1">"澳洲和牛薄切牛舌"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-48 object-cover"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-5"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-lg font-bold text-gray-800 mb-2"</span><span class="s3">&gt;</span><span class="s2">澳洲和牛薄切牛舌</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold mb-3"</span><span class="s3">&gt;</span><span class="s1">300g/包 (±5%)｜團購價 $620</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>Q彈脆爽的經典牛舌口感依然迷人。撒點鹽巴、配上蔥鹽醬，再來一口泡菜，層次直接拉滿！</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>澳洲和牛版本油花更加細膩豐富，不只更耐煎，口感也再升級。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>食用方式：平底鍋少許油，中小火兩面煎10秒，微焦上色微捲曲即可。</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center justify-between mt-auto pt-4 border-t border-gray-100"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">購買包數 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center bg-gray-100 rounded-lg p-1"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty2', -1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-minus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"qty2"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1474895882"</span><span class="s2"> </span><span class="s5">value</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">min</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"product-qty w-12 text-center bg-transparent font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">data-price</span><span class="s3">=</span><span class="s1">"620"</span><span class="s2"> </span><span class="s5">oninput</span><span class="s3">=</span><span class="s1">"calculateTotal()"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty2', 1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-plus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">&lt;!-- 商品 3 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">img</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://lh7-rt.googleusercontent.com/formsz/AN7BsVAMbI4XQJs3v2yC1Lm5kW5dZp6caCxpgsXT94a7vHWUAQ8x5UJzoMma0Bcb0haGdafIZh03tBSQwVVxpHkIkzaYKT2Z3-SvNeP7C_oBbMgOruhduJZhGMUSkcOeL0QgO486Wru8vacuOodxFVxhzosLtpK8VH9gcTcT6BVo4-00SmFqPl5mmp1Mxx4ol_juI1ERypEasOwOJIfHZARy=w740?key=AZ8BsH_zgbuHbknDQAfh6g"</span><span class="s2"> </span><span class="s5">alt</span><span class="s3">=</span><span class="s1">"橫膈牛排"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-48 object-cover"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-5"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-lg font-bold text-gray-800 mb-2"</span><span class="s3">&gt;</span><span class="s2">橫膈牛排 (美國)</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold mb-3"</span><span class="s3">&gt;</span><span class="s1">300g/包 (±10%)｜團購價 $490</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>很多燒肉店會把橫膈膜的油脂修得很乾淨，但香氣也一起修掉了。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>我們刻意保留部分油脂，留下橫膈牛排最迷人的味道。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>可平底鍋煎至金黃焦脆，或氣炸鍋180度烘烤15~20分鐘。</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center justify-between mt-auto pt-4 border-t border-gray-100"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">購買包數 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center bg-gray-100 rounded-lg p-1"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty3', -1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-minus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"qty3"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1114704694"</span><span class="s2"> </span><span class="s5">value</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">min</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"product-qty w-12 text-center bg-transparent font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">data-price</span><span class="s3">=</span><span class="s1">"490"</span><span class="s2"> </span><span class="s5">oninput</span><span class="s3">=</span><span class="s1">"calculateTotal()"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty3', 1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-plus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">&lt;!-- 商品 4 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">img</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://lh7-rt.googleusercontent.com/formsz/AN7BsVB5c18idhpYUfTFRadGdXCYmWPJDdY5OkfwZ483Udf_x3MLcQeYevEhGglgKBBdfJljAnkaZLeZTZfdwQmLXArqcJ_B0zWlMy5LhyQvbdkXYO6bgD2nJLNdWiCXhvtoDD4xEnNaoiS7qHfRkcRHYI6BdP0idgyWOpTJ7WOSfxoZhT2JktoT26bTFPeo6f6O-Au_ij9B9SCAc0f8GWc=w740?key=AZ8BsH_zgbuHbknDQAfh6g"</span><span class="s2"> </span><span class="s5">alt</span><span class="s3">=</span><span class="s1">"日式醬油胖翅"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-48 object-cover"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-5"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-lg font-bold text-gray-800 mb-2"</span><span class="s3">&gt;</span><span class="s2">日式醬油胖翅</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold mb-3"</span><span class="s3">&gt;</span><span class="s1">500g/包｜團購價 $380</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>不吃辣的朋友有新選擇啦！</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>選用肥美的翅中部位，以日式醬油完美醃製。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>只需190度烘烤15~20分鐘，香氣噴發的日式醬油胖翅出爐！</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center justify-between mt-auto pt-4 border-t border-gray-100"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">購買包數 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center bg-gray-100 rounded-lg p-1"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty4', -1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-minus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"qty4"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1402798209"</span><span class="s2"> </span><span class="s5">value</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">min</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"product-qty w-12 text-center bg-transparent font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">data-price</span><span class="s3">=</span><span class="s1">"380"</span><span class="s2"> </span><span class="s5">oninput</span><span class="s3">=</span><span class="s1">"calculateTotal()"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty4', 1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-plus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">&lt;!-- 商品 5 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">img</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://lh7-rt.googleusercontent.com/formsz/AN7BsVCLCbMqiOUIdFTivHXtWbllyzAKRBx2Rqzc699RH_pWATni5T9oBiHHnhhfGkwOK8HB4HeK_eu8kf2Ln1dUyCj2LUXz6b_eTLra3sXHkZ2naSnnwI16wh_Bg6LdiyWb0aR88IjkdktGiGFQLLqtuJFH3Tz5K7b_u6ArRT83vaMWU68I_insTmEdwZ2IfOp8x4zF9OOC1IHcFkTr_oyP=w740?key=AZ8BsH_zgbuHbknDQAfh6g"</span><span class="s2"> </span><span class="s5">alt</span><span class="s3">=</span><span class="s1">"椒麻胖翅"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-48 object-cover"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-5"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-lg font-bold text-gray-800 mb-2"</span><span class="s3">&gt;</span><span class="s2">椒麻胖翅</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold mb-3"</span><span class="s3">&gt;</span><span class="s1">500g/包｜團購價 $380</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>選用肥美的翅中部位，以麻辣醬完美醃製。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>每口都能感受到陣陣的麻辣香，但卻不會太辣！</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>保證絕對會想來手啤酒！超涮嘴！</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center justify-between mt-auto pt-4 border-t border-gray-100"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">購買包數 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center bg-gray-100 rounded-lg p-1"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty5', -1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-minus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"qty5"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1558833675"</span><span class="s2"> </span><span class="s5">value</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">min</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"product-qty w-12 text-center bg-transparent font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">data-price</span><span class="s3">=</span><span class="s1">"380"</span><span class="s2"> </span><span class="s5">oninput</span><span class="s3">=</span><span class="s1">"calculateTotal()"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty5', 1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-plus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s7">&lt;!-- 商品 6 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">img</span><span class="s2"> </span><span class="s5">src</span><span class="s3">=</span><span class="s1">"https://lh7-rt.googleusercontent.com/formsz/AN7BsVB4OjS2KE5RMiaT2YTrJxEWhMD2hUnXPdU3C3D-6bAuK-fZj5euABiecgol3T11RGxwmT1Yz1Knb6JkA98hTy6reNA4RXciHL7MozioA3Qfr1fAN3MRV6xZ41WuGE9epvg3uDucYGX25NKKoB545bo9UEzCGELZMO2sRYNl2o_tUK1tCSuyaip2pphhioM51l8xFC7hdw5B2Ezut6P9=w740?key=AZ8BsH_zgbuHbknDQAfh6g"</span><span class="s2"> </span><span class="s5">alt</span><span class="s3">=</span><span class="s1">"紅燒牛舌"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full h-48 object-cover"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-5"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-lg font-bold text-gray-800 mb-2"</span><span class="s3">&gt;</span><span class="s2">紅燒牛舌 (紐西蘭)</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-brand-600 font-bold mb-3"</span><span class="s3">&gt;</span><span class="s1">500g/包 (±10%)｜團購價 $260</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>慢火燉煮成紅燒風味，口感像牛腱般軟嫩好咬。</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>濃郁鹹香的醬汁依個人喜好加上喜歡的麵條，直接升級成一碗超滿足的紅燒牛舌麵！</span><span class="s3">&lt;</span><span class="s4">br</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span>(註：販售不包含麵條哦)</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center justify-between mt-auto pt-4 border-t border-gray-100"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm font-medium text-gray-700"</span><span class="s3">&gt;</span><span class="s2">購買包數 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex items-center bg-gray-100 rounded-lg p-1"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty6', -1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-minus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"qty6"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1944030165"</span><span class="s2"> </span><span class="s5">value</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">min</span><span class="s3">=</span><span class="s1">"0"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"product-qty w-12 text-center bg-transparent font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">data-price</span><span class="s3">=</span><span class="s1">"260"</span><span class="s2"> </span><span class="s5">oninput</span><span class="s3">=</span><span class="s1">"calculateTotal()"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                                </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"button"</span><span class="s2"> </span><span class="s5">onclick</span><span class="s3">=</span><span class="s1">"updateQty('qty6', 1)"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-plus"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">section</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- 購物車結算面板 (固定在底部或浮動呈現) --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-gray-800 text-white rounded-xl shadow-xl p-6 mb-8 sticky top-4 z-10 border border-gray-700"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">h3</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-lg font-bold text-gray-200 mb-4 border-b border-gray-600 pb-2"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-calculator mr-2"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span><span class="s2">自動試算</span><span class="s3">&lt;/</span><span class="s4">h3</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex justify-between mb-2"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-gray-300"</span><span class="s3">&gt;</span><span class="s1">商品小計</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"font-medium"</span><span class="s3">&gt;</span><span class="s2">$ </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"display-subtotal"</span><span class="s3">&gt;</span><span class="s2">0</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex justify-between mb-3 text-sm"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-gray-400"</span><span class="s3">&gt;</span><span class="s1">冷凍運費 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-xs ml-1"</span><span class="s3">&gt;</span><span class="s1">(滿 $1299 免運)</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-gray-300"</span><span class="s3">&gt;</span><span class="s2">$ </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"display-shipping"</span><span class="s3">&gt;</span><span class="s2">0</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"promo-message"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"hidden mb-3 p-2 bg-brand-900 bg-opacity-50 border border-brand-500 rounded text-brand-100 text-sm animate-pulse"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">i</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"fas fa-gift text-brand-400 mr-1"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span><span class="s1"> 恭喜！您已符合滿 $1800 贈送「紅燒牛舌 1包」資格！</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"flex justify-between items-center mt-4 pt-4 border-t border-gray-600"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-lg font-bold"</span><span class="s3">&gt;</span><span class="s1">匯款總計</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-2xl font-bold text-brand-400"</span><span class="s3">&gt;</span><span class="s2">$ </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"display-total"</span><span class="s3">&gt;</span><span class="s2">0</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">span</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- 步驟 3：收件與付款資訊 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">section</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-white rounded-xl shadow-md overflow-hidden mb-8"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-brand-50 px-6 py-4 border-b border-brand-100 flex items-center"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"bg-brand-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3"</span><span class="s3">&gt;</span><span class="s2">3</span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">h2</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-xl font-bold text-brand-900"</span><span class="s3">&gt;</span><span class="s2">收件與付款資訊</span><span class="s3">&lt;/</span><span class="s4">h2</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"p-6"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">收件人姓名 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"text"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.435467380"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"真實姓名"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">收件人電話 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"tel"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.403885724"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"09xx-xxx-xxx"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"mb-6"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">郵遞區號 + 地址 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"text"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.792884666"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"例如: 100 台北市中正區重慶南路一段1號"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">匯款總金額 (自動帶入) </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"number"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"input-total"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.641584216"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">readonly</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 font-bold focus:outline-none"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"0"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-xs text-gray-500 mt-1"</span><span class="s3">&gt;</span><span class="s1">此欄位由系統自動計算 (包含運費)</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">匯款末五碼 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"text"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.650948776"</span><span class="s2"> </span><span class="s5">maxlength</span><span class="s3">=</span><span class="s1">"5"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"12345"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"grid grid-cols-1 md:grid-cols-2 gap-6 mb-6"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">轉帳日期 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"date"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.488943979"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">個人雲端發票載具手機條碼 </span><span class="s3">&lt;</span><span class="s4">span</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-red-500"</span><span class="s3">&gt;</span><span class="s2">*</span><span class="s3">&lt;/</span><span class="s4">span</span><span class="s3">&gt;&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">input</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"text"</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1967444386"</span><span class="s2"> </span><span class="s5">required</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"/ABC+123"</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                        </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s1"> </span><span class="s5">class</span><span class="s3">=</span><span class="s6">"text-xs text-gray-500 mt-1 text-red-500"</span><span class="s3">&gt;</span><span class="s1">團購為個人戶訂購，請勿填寫公司戶發票資訊</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">label</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"block text-sm font-medium text-gray-700 mb-2"</span><span class="s3">&gt;</span><span class="s2">其他備註</span><span class="s3">&lt;/</span><span class="s4">label</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                    </span></span><span class="s3">&lt;</span><span class="s4">textarea</span><span class="s2"> </span><span class="s5">name</span><span class="s3">=</span><span class="s1">"entry.1575266893"</span><span class="s2"> </span><span class="s5">rows</span><span class="s3">=</span><span class="s1">"3"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition"</span><span class="s2"> </span><span class="s5">placeholder</span><span class="s3">=</span><span class="s1">"可許願到貨日期，實際運送依物流為主 (許願最晚出貨日為115/6/30之前)"</span><span class="s3">&gt;&lt;/</span><span class="s4">textarea</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">section</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p5"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s1">&lt;!-- 送出按鈕 --&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;</span><span class="s4">div</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-center pb-12"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">button</span><span class="s2"> </span><span class="s5">type</span><span class="s3">=</span><span class="s1">"submit"</span><span class="s2"> </span><span class="s5">id</span><span class="s3">=</span><span class="s1">"submitBtn"</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"w-full md:w-1/2 px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xl rounded-full shadow-lg transform transition active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">                </span></span><span class="s3">&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-paper-plane mr-2"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span><span class="s2"> 確認送出訂單</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;/</span><span class="s4">button</span><span class="s3">&gt;</span></p>
-<p class="p2"><span class="s2"><span class="Apple-converted-space">            </span></span><span class="s3">&lt;</span><span class="s4">p</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"text-sm text-gray-500 mt-4"</span><span class="s3">&gt;&lt;</span><span class="s4">i</span><span class="s2"> </span><span class="s5">class</span><span class="s3">=</span><span class="s1">"fas fa-lock mr-1"</span><span class="s3">&gt;&lt;/</span><span class="s4">i</span><span class="s3">&gt;</span><span class="s2"> 資料安全加密傳送至 Google 表單</span><span class="s3">&lt;/</span><span class="s4">p</span><span class="s3">&gt;</span></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">        </span></span><span class="s3">&lt;/</span><span class="s4">div</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p4"><span class="s1"><span class="Apple-converted-space">    </span></span><span class="s3">&lt;/</span><span class="s4">form</span><span class="s3">&gt;</span></p>
-<p class="p6"><span class="s9"></span><br></p>
-<p class="p1"><span class="s3">&lt;/</span><span class="s1">body</span><span class="s3">&gt;</span></p>
-<p class="p1"><span class="s3">&lt;/</span><span class="s1">html</span><span class="s3">&gt;</span></p>
+<body class="bg-stone-100 text-gray-800 antialiased font-sans pb-20">
+
+    <!-- 用於攔截 Google 表單跳轉的隱藏 iframe -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="handleIframeLoad()"></iframe>
+
+    <!-- 頂部橫幅 (Header) -->
+    <header class="w-full h-64 md:h-80 bg-cover bg-center relative" style="background-image: url('https://lh7-rt.googleusercontent.com/formsz/AN7BsVCMiOWctmNHnTt08M_m20_2eajySYuvRL_-GrpwSE4BH0NWzlvK0NIrp3w8peiJX3etqHJwZLWDb3c_73TvEU7ULNATzVMkVnTCPnCddX7cldaDAbyKcC81WqyibeNFzpxUBvtBfSxQyDGXpwNx-DWe7nPnw5FE0ZKK62PAbZlFG93HmKS4LTMRDZphLTzH-MZ5kS5Hwg4JCHOOjLUL=w1078?key=AZ8BsH_zgbuHbknDQAfh6g');">
+        <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-wider text-shadow-md">精選夯牛商品</h1>
+            <div class="glass-panel px-6 py-4 rounded-lg shadow-lg max-w-2xl text-left border-l-4 border-brand-500">
+                <p class="text-gray-800 font-medium mb-1"><i class="fas fa-bullhorn text-brand-600 mr-2"></i>請詳閱主揪文說明</p>
+                <p class="text-gray-800 font-medium mb-1"><i class="fas fa-money-check-alt text-brand-600 mr-2"></i>收款帳戶：台灣銀行(004) 034001008368</p>
+                <p class="text-sm text-gray-600 mt-2 border-t pt-2">
+                    <span class="text-brand-600 font-bold">優惠快報：</span>單筆滿 1299 免運 (未滿冷凍運費 200元)<br>
+                    單筆消費滿 1800 元，加碼送「紅燒牛舌 1包」！
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <!-- 成功送出後的感謝畫面 (預設隱藏) -->
+    <div id="successMessage" class="hidden max-w-3xl mx-auto mt-12 px-4">
+        <div class="bg-white rounded-xl shadow-xl p-10 text-center border-t-8 border-green-500">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl text-green-500"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">訂購成功！</h2>
+            <p class="text-lg text-gray-600 mb-6">感謝您的訂購，我們已經收到您的表單資料。<br>請記得於期限內完成匯款，以免影響出貨進度喔！</p>
+            <div class="bg-gray-50 p-4 rounded-lg inline-block text-left mb-8">
+                <p class="font-medium text-gray-700">匯款資訊備忘：</p>
+                <p class="text-gray-600">台灣銀行 (004) 034001008368</p>
+            </div>
+            <br>
+            <button onclick="window.location.reload()" class="px-8 py-3 bg-brand-600 text-white font-bold rounded-full hover:bg-brand-700 transition shadow-lg">
+                返回重新填寫
+            </button>
+        </div>
+    </div>
+
+    <!-- 主要表單區塊 -->
+    <form id="orderForm" action="https://docs.google.com/forms/u/1/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto mt-8 px-4" onsubmit="handleFormSubmit(event)">
+        
+        <!-- 步驟 1：基本資訊 -->
+        <section class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <div class="bg-brand-50 px-6 py-4 border-b border-brand-100 flex items-center">
+                <div class="bg-brand-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">1</div>
+                <h2 class="text-xl font-bold text-brand-900">訂購人基本資訊</h2>
+            </div>
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">電子郵件 <span class="text-red-500">*</span></label>
+                    <input type="email" name="emailAddress" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="example@email.com">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">FB名稱 <span class="text-red-500">*</span></label>
+                    <input type="text" name="entry.1404869440" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="您在 Facebook 的名稱">
+                </div>
+            </div>
+        </section>
+
+        <!-- 步驟 2：商品選購 -->
+        <section class="mb-8">
+            <div class="flex items-center mb-6 px-2">
+                <div class="bg-brand-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3 shadow-md">2</div>
+                <h2 class="text-2xl font-bold text-gray-800">挑選精選商品</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 商品 1 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVArmEENtXP_5RSvkBlu8KF34kZZHxhGew1NCOEpjTDV9LKy3huR-_bPVjfd384qWKhPlsQz43GYAytU8n0WhFxyyJA3zLJ8f_KbgvAHdrFNCrHLY-MhKLqkeV2LdYYBmIfTeYoQGrGOlnrj0Tc_CSoTRBOdezPDJV2HPATIydx8FFzW4xFzyeDPtfaIUqOc8dEABWGVmn7KEUOntLg=w740?key=AZ8BsH_zgbuHbknDQAfh6g" alt="限量澳洲厚切牛舌" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-gray-800">限量澳洲厚切牛舌</h3>
+                            <span class="bg-red-100 text-red-800 text-xs font-bold px-2 py-1 rounded">熱銷</span>
+                        </div>
+                        <p class="text-brand-600 font-bold mb-3">300g/包 (±5%)｜團購價 $660</p>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+                            澳洲和牛牛舌保有牛舌最經典的Q脆口感，但多了一層更細膩的油脂與香氣尾韻。<br>
+                            頂級油花，不僅讓澳洲牛舌更為耐煎！熟度也更好掌握！即使是料理小白也能輕易料理。<br>
+                            兩面各煎30~40秒，外表微焦，一刀切開肉質依然粉嫩！沾鹽巴或檸檬都很搭！
+                        </p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <label class="text-sm font-medium text-gray-700">購買包數 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button type="button" onclick="updateQty('qty1', -1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-minus"></i></button>
+                                <input type="number" id="qty1" name="entry.2057394052" value="0" min="0" required class="product-qty w-12 text-center bg-transparent font-bold focus:outline-none" data-price="660" oninput="calculateTotal()">
+                                <button type="button" onclick="updateQty('qty1', 1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品 2 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVDF7QQvwM0Xcon0XG-QR2ogfRt-cvc9eVqv1K7OGALR9NGyUHXYVEEsujQErHbA05Mc52qu64ec4Dfn-mZdj_8JcVBIRZucxENKSD-pp7DYsxe248xuiiUbPY9h2SHbPHHNx64qKY50AntMFBnS9XJHG5SDbMYiPkn2ZjHeCFFyaZiPVugyz3LAfVHsrdCdC1nZCwMjLU_K6g5jMiA=w740?key=AZ8BsH_zgbuHbknDQAfh6g" alt="澳洲和牛薄切牛舌" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">澳洲和牛薄切牛舌</h3>
+                        <p class="text-brand-600 font-bold mb-3">300g/包 (±5%)｜團購價 $620</p>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+                            Q彈脆爽的經典牛舌口感依然迷人。撒點鹽巴、配上蔥鹽醬，再來一口泡菜，層次直接拉滿！<br>
+                            澳洲和牛版本油花更加細膩豐富，不只更耐煎，口感也再升級。<br>
+                            食用方式：平底鍋少許油，中小火兩面煎10秒，微焦上色微捲曲即可。
+                        </p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <label class="text-sm font-medium text-gray-700">購買包數 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button type="button" onclick="updateQty('qty2', -1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-minus"></i></button>
+                                <input type="number" id="qty2" name="entry.1474895882" value="0" min="0" required class="product-qty w-12 text-center bg-transparent font-bold focus:outline-none" data-price="620" oninput="calculateTotal()">
+                                <button type="button" onclick="updateQty('qty2', 1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品 3 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVAMbI4XQJs3v2yC1Lm5kW5dZp6caCxpgsXT94a7vHWUAQ8x5UJzoMma0Bcb0haGdafIZh03tBSQwVVxpHkIkzaYKT2Z3-SvNeP7C_oBbMgOruhduJZhGMUSkcOeL0QgO486Wru8vacuOodxFVxhzosLtpK8VH9gcTcT6BVo4-00SmFqPl5mmp1Mxx4ol_juI1ERypEasOwOJIfHZARy=w740?key=AZ8BsH_zgbuHbknDQAfh6g" alt="橫膈牛排" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">橫膈牛排 (美國)</h3>
+                        <p class="text-brand-600 font-bold mb-3">300g/包 (±10%)｜團購價 $490</p>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+                            很多燒肉店會把橫膈膜的油脂修得很乾淨，但香氣也一起修掉了。<br>
+                            我們刻意保留部分油脂，留下橫膈牛排最迷人的味道。<br>
+                            可平底鍋煎至金黃焦脆，或氣炸鍋180度烘烤15~20分鐘。
+                        </p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <label class="text-sm font-medium text-gray-700">購買包數 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button type="button" onclick="updateQty('qty3', -1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-minus"></i></button>
+                                <input type="number" id="qty3" name="entry.1114704694" value="0" min="0" required class="product-qty w-12 text-center bg-transparent font-bold focus:outline-none" data-price="490" oninput="calculateTotal()">
+                                <button type="button" onclick="updateQty('qty3', 1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品 4 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVB5c18idhpYUfTFRadGdXCYmWPJDdY5OkfwZ483Udf_x3MLcQeYevEhGglgKBBdfJljAnkaZLeZTZfdwQmLXArqcJ_B0zWlMy5LhyQvbdkXYO6bgD2nJLNdWiCXhvtoDD4xEnNaoiS7qHfRkcRHYI6BdP0idgyWOpTJ7WOSfxoZhT2JktoT26bTFPeo6f6O-Au_ij9B9SCAc0f8GWc=w740?key=AZ8BsH_zgbuHbknDQAfh6g" alt="日式醬油胖翅" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">日式醬油胖翅</h3>
+                        <p class="text-brand-600 font-bold mb-3">500g/包｜團購價 $380</p>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+                            不吃辣的朋友有新選擇啦！<br>
+                            選用肥美的翅中部位，以日式醬油完美醃製。<br>
+                            只需190度烘烤15~20分鐘，香氣噴發的日式醬油胖翅出爐！
+                        </p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <label class="text-sm font-medium text-gray-700">購買包數 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button type="button" onclick="updateQty('qty4', -1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-minus"></i></button>
+                                <input type="number" id="qty4" name="entry.1402798209" value="0" min="0" required class="product-qty w-12 text-center bg-transparent font-bold focus:outline-none" data-price="380" oninput="calculateTotal()">
+                                <button type="button" onclick="updateQty('qty4', 1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品 5 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVCLCbMqiOUIdFTivHXtWbllyzAKRBx2Rqzc699RH_pWATni5T9oBiHHnhhfGkwOK8HB4HeK_eu8kf2Ln1dUyCj2LUXz6b_eTLra3sXHkZ2naSnnwI16wh_Bg6LdiyWb0aR88IjkdktGiGFQLLqtuJFH3Tz5K7b_u6ArRT83vaMWU68I_insTmEdwZ2IfOp8x4zF9OOC1IHcFkTr_oyP=w740?key=AZ8BsH_zgbuHbknDQAfh6g" alt="椒麻胖翅" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">椒麻胖翅</h3>
+                        <p class="text-brand-600 font-bold mb-3">500g/包｜團購價 $380</p>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+                            選用肥美的翅中部位，以麻辣醬完美醃製。<br>
+                            每口都能感受到陣陣的麻辣香，但卻不會太辣！<br>
+                            保證絕對會想來手啤酒！超涮嘴！
+                        </p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <label class="text-sm font-medium text-gray-700">購買包數 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button type="button" onclick="updateQty('qty5', -1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-minus"></i></button>
+                                <input type="number" id="qty5" name="entry.1558833675" value="0" min="0" required class="product-qty w-12 text-center bg-transparent font-bold focus:outline-none" data-price="380" oninput="calculateTotal()">
+                                <button type="button" onclick="updateQty('qty5', 1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 商品 6 -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition">
+                    <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVB4OjS2KE5RMiaT2YTrJxEWhMD2hUnXPdU3C3D-6bAuK-fZj5euABiecgol3T11RGxwmT1Yz1Knb6JkA98hTy6reNA4RXciHL7MozioA3Qfr1fAN3MRV6xZ41WuGE9epvg3uDucYGX25NKKoB545bo9UEzCGELZMO2sRYNl2o_tUK1tCSuyaip2pphhioM51l8xFC7hdw5B2Ezut6P9=w740?key=AZ8BsH_zgbuHbknDQAfh6g" alt="紅燒牛舌" class="w-full h-48 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-lg font-bold text-gray-800 mb-2">紅燒牛舌 (紐西蘭)</h3>
+                        <p class="text-brand-600 font-bold mb-3">500g/包 (±10%)｜團購價 $260</p>
+                        <p class="text-sm text-gray-500 mb-4 line-clamp-3 hover:line-clamp-none transition-all duration-300">
+                            慢火燉煮成紅燒風味，口感像牛腱般軟嫩好咬。<br>
+                            濃郁鹹香的醬汁依個人喜好加上喜歡的麵條，直接升級成一碗超滿足的紅燒牛舌麵！<br>
+                            (註：販售不包含麵條哦)
+                        </p>
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                            <label class="text-sm font-medium text-gray-700">購買包數 <span class="text-red-500">*</span></label>
+                            <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                                <button type="button" onclick="updateQty('qty6', -1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-minus"></i></button>
+                                <input type="number" id="qty6" name="entry.1944030165" value="0" min="0" required class="product-qty w-12 text-center bg-transparent font-bold focus:outline-none" data-price="260" oninput="calculateTotal()">
+                                <button type="button" onclick="updateQty('qty6', 1)" class="w-8 h-8 rounded bg-white shadow-sm text-gray-600 hover:text-brand-600 focus:outline-none"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 購物車結算面板 (固定在底部或浮動呈現) -->
+        <div class="bg-gray-800 text-white rounded-xl shadow-xl p-6 mb-8 sticky top-4 z-10 border border-gray-700">
+            <h3 class="text-lg font-bold text-gray-200 mb-4 border-b border-gray-600 pb-2"><i class="fas fa-calculator mr-2"></i>自動試算</h3>
+            <div class="flex justify-between mb-2">
+                <span class="text-gray-300">商品小計</span>
+                <span class="font-medium">$ <span id="display-subtotal">0</span></span>
+            </div>
+            <div class="flex justify-between mb-3 text-sm">
+                <span class="text-gray-400">冷凍運費 <span class="text-xs ml-1">(滿 $1299 免運)</span></span>
+                <span class="text-gray-300">$ <span id="display-shipping">0</span></span>
+            </div>
+            <div id="promo-message" class="hidden mb-3 p-2 bg-brand-900 bg-opacity-50 border border-brand-500 rounded text-brand-100 text-sm animate-pulse">
+                <i class="fas fa-gift text-brand-400 mr-1"></i> 恭喜！您已符合滿 $1800 贈送「紅燒牛舌 1包」資格！
+            </div>
+            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-600">
+                <span class="text-lg font-bold">匯款總計</span>
+                <span class="text-2xl font-bold text-brand-400">$ <span id="display-total">0</span></span>
+            </div>
+        </div>
+
+        <!-- 步驟 3：收件與付款資訊 -->
+        <section class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
+            <div class="bg-brand-50 px-6 py-4 border-b border-brand-100 flex items-center">
+                <div class="bg-brand-500 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold mr-3">3</div>
+                <h2 class="text-xl font-bold text-brand-900">收件與付款資訊</h2>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">收件人姓名 <span class="text-red-500">*</span></label>
+                        <input type="text" name="entry.435467380" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="真實姓名">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">收件人電話 <span class="text-red-500">*</span></label>
+                        <input type="tel" name="entry.403885724" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="09xx-xxx-xxx">
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">郵遞區號 + 地址 <span class="text-red-500">*</span></label>
+                    <input type="text" name="entry.792884666" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="例如: 100 台北市中正區重慶南路一段1號">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">匯款總金額 (自動帶入) <span class="text-red-500">*</span></label>
+                        <input type="number" id="input-total" name="entry.641584216" required readonly class="w-full px-4 py-2 bg-gray-100 border border-gray-300 rounded-lg text-gray-700 font-bold focus:outline-none" placeholder="0">
+                        <p class="text-xs text-gray-500 mt-1">此欄位由系統自動計算 (包含運費)</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">匯款末五碼 <span class="text-red-500">*</span></label>
+                        <input type="text" name="entry.650948776" maxlength="5" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="12345">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">轉帳日期 <span class="text-red-500">*</span></label>
+                        <input type="date" name="entry.488943979" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">個人雲端發票載具手機條碼 <span class="text-red-500">*</span></label>
+                        <input type="text" name="entry.1967444386" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="/ABC+123">
+                        <p class="text-xs text-gray-500 mt-1 text-red-500">團購為個人戶訂購，請勿填寫公司戶發票資訊</p>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">其他備註</label>
+                    <textarea name="entry.1575266893" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition" placeholder="可許願到貨日期，實際運送依物流為主 (許願最晚出貨日為115/6/30之前)"></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- 送出按鈕 -->
+        <div class="text-center pb-12">
+            <button type="submit" id="submitBtn" class="w-full md:w-1/2 px-8 py-4 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xl rounded-full shadow-lg transform transition active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed">
+                <i class="fas fa-paper-plane mr-2"></i> 確認送出訂單
+            </button>
+            <p class="text-sm text-gray-500 mt-4"><i class="fas fa-lock mr-1"></i> 資料安全加密傳送至 Google 表單</p>
+        </div>
+
+    </form>
+
 </body>
 </html>
