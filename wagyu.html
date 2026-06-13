@@ -14,7 +14,7 @@
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
-            background-color: #111827; /* 深色背景 */
+            background-color: #1f110b; /* 替換為深褐色背景 */
             color: #F3F4F6;
         }
         
@@ -26,18 +26,46 @@
         }
         
         .glass-card {
-            background: rgba(31, 41, 55, 0.7);
+            background: rgba(44, 25, 17, 0.7); /* 微調卡片底色以融入深褐色 */
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(75, 85, 99, 0.4);
+            border: 1px solid rgba(249, 115, 22, 0.2);
         }
 
+        .focus-ring:focus-within {
         .focus-ring:focus-within {
             border-color: #F97316;
             box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.2);
         }
+
+        /* 活潑的懸浮互動：卡片上浮與橘紅光芒 */
+        .product-card-hover {
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+        }
+        .product-card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px -12px rgba(249, 115, 22, 0.4), 0 0 25px 0 rgba(239, 68, 68, 0.3);
+            border-color: rgba(249, 115, 22, 0.6);
+        }
+        
+        /* 背景光暈脈動動畫 */
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.1); }
+        }
+        .bg-glow-1 { animation: pulse-glow 8s infinite ease-in-out; }
+        .bg-glow-2 { animation: pulse-glow 10s infinite ease-in-out reverse; }
+        .bg-glow-3 { animation: pulse-glow 12s infinite ease-in-out 2s; }
     </style>
 </head>
-<body class="antialiased min-h-screen pb-24">
+<body class="antialiased min-h-screen pb-24 relative overflow-x-hidden">
+
+    <!-- 炭火餘燼背景特效 (Canvas + CSS 光暈) -->
+    <div class="fixed inset-0 pointer-events-none z-[-2]">
+        <div class="absolute top-[10%] left-[5%] w-96 h-96 bg-red-600/30 rounded-full blur-[120px] bg-glow-1"></div>
+        <div class="absolute top-[50%] right-[5%] w-[30rem] h-[30rem] bg-orange-600/20 rounded-full blur-[150px] bg-glow-2"></div>
+        <div class="absolute bottom-[-10%] left-[20%] w-80 h-80 bg-yellow-600/20 rounded-full blur-[100px] bg-glow-3"></div>
+    </div>
+    <canvas id="embersCanvas" class="fixed inset-0 pointer-events-none z-[-1]"></canvas>
 
     <!-- 隱藏的 iframe 用於背景提交表單，避免網頁跳轉 -->
     <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(window.submitted){showSuccessModal();}"></iframe>
@@ -48,218 +76,276 @@
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-gray-900/80 via-gray-900/60 to-gray-900"></div>
         
-        <div class="relative z-10 text-center px-4">
-            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 tracking-wider mb-3">
+        <div class="relative z-10 text-center px-4 mt-8">
+            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 tracking-wider mb-3 drop-shadow-lg">
                 精選夯牛商品
             </h1>
-            <p class="text-gray-300 md:text-lg font-light tracking-widest">頂級肉品．極致饗宴</p>
+            <p class="text-gray-200 md:text-lg font-medium tracking-widest drop-shadow-md">✨ 頂級肉品．極致饗宴 ✨</p>
         </div>
     </header>
 
-    <!-- 滿額活動公告 -->
-    <div class="max-w-4xl mx-auto px-4 -mt-8 relative z-20">
-        <div class="bg-gradient-to-r from-orange-600 to-orange-500 rounded-xl shadow-2xl p-6 text-white flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-4">
-                <i class="ph-fill ph-speaker-high text-4xl text-orange-200"></i>
-                <div>
-                    <h3 class="font-bold text-lg">團購優惠公告</h3>
-                    <p class="text-orange-100 text-sm">單筆訂單滿 <span class="font-bold text-white text-base">1299</span> 免運！(未滿需加 200 元冷凍運費)</p>
-                    <p class="text-orange-100 text-sm">單筆消費滿 <span class="font-bold text-white text-base">1800</span> 元，即贈送「紅燒牛舌 1 包」</p>
+    <!-- 滿額活動公告 (花俏活潑版) -->
+    <div class="max-w-4xl mx-auto px-4 -mt-16 md:-mt-20 relative z-20 mb-8">
+        <div class="bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 rounded-2xl shadow-[0_10px_40px_-10px_rgba(239,68,68,0.5)] p-1 transform transition-transform hover:scale-[1.01] animate-bounce-subtle">
+            <div class="bg-gray-900/90 backdrop-blur-sm rounded-xl p-5 md:p-7 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden border border-orange-500/30">
+                <!-- 裝飾光暈 -->
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-32 h-32 bg-yellow-400/20 blur-3xl rounded-full"></div>
+                <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-32 h-32 bg-red-500/20 blur-3xl rounded-full"></div>
+
+                <div class="flex items-center gap-5 relative z-10 w-full">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-yellow-300 to-orange-500 flex items-center justify-center shadow-lg shrink-0">
+                        <i class="ph-fill ph-gift text-3xl text-gray-900"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-black text-xl md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400 mb-1">🎉 團購好康大放送 🎉</h3>
+                        <div class="space-y-2 mt-2">
+                            <p class="text-white font-medium flex items-start gap-2 text-sm md:text-base">
+                                <i class="ph-fill ph-check-circle text-green-400 mt-0.5 md:mt-1"></i>
+                                <span>單筆訂單滿 <span class="text-xl md:text-2xl font-black text-yellow-300 mx-1">1299</span> <span class="text-orange-300 font-bold">免運！</span><span class="text-gray-400 text-xs md:text-sm font-normal ml-1">(未滿需加 200 元冷凍運費)</span></span>
+                            </p>
+                            <p class="text-white font-medium flex items-start gap-2 text-sm md:text-base">
+                                <i class="ph-fill ph-check-circle text-green-400 mt-0.5 md:mt-1"></i>
+                                <span>單筆消費滿 <span class="text-xl md:text-2xl font-black text-yellow-300 mx-1">1800</span> 元，即贈送<span class="text-orange-300 font-bold ml-1">「紅燒牛舌 1 包」🎁</span></span>
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="text-right border-l border-orange-400/50 pl-4">
-                <p class="text-xs text-orange-200 mb-1">收款帳戶</p>
-                <p class="font-mono font-bold tracking-wider">台灣銀行 (004)<br/>034001008368</p>
             </div>
         </div>
     </div>
 
     <!-- 主表單 -->
-    <!-- Google Form Action URL -->
-    <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto px-4 py-8 space-y-8" onsubmit="return handleFormSubmit()">
+    <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto px-4 py-4 space-y-8" onsubmit="return handleFormSubmit()">
         
         <!-- 區塊 1：基本資料 -->
-        <section class="glass-card rounded-2xl p-6 md:p-8">
-            <h2 class="text-2xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
-                <i class="ph ph-user-circle"></i> 訂購人資訊
+        <section class="glass-card rounded-2xl p-6 md:p-8 shadow-lg">
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-user-circle"></i> 訂購人資訊
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">電子郵件 <span class="text-red-500">*</span></label>
-                    <input type="email" name="emailAddress" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="example@gmail.com">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                <div class="flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">電子郵件 <span class="text-red-500">*</span></label>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="email" name="emailAddress" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors" placeholder="example@gmail.com">
+                    </div>
                 </div>
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">FB名稱 <span class="text-red-500">*</span></label>
-                    <input type="text" name="entry.716533617" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="請輸入您在社團/粉專的名稱">
+                <div class="flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">FB名稱 <span class="text-red-500">*</span></label>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="text" name="entry.716533617" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors" placeholder="請輸入您的Facebook名稱">
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- 區塊 2：精選商品 (有圖片) -->
-        <section class="glass-card rounded-2xl p-6 md:p-8">
-            <h2 class="text-2xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
-                <i class="ph ph-shopping-bag"></i> 商品選購
+        <section class="glass-card rounded-2xl p-6 md:p-8 shadow-lg">
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-shopping-bag"></i> 商品選購
             </h2>
             
+            <div class="space-y-8">
             <div class="space-y-6">
                 <!-- 商品 1 -->
-                <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-orange-500/50 transition-colors">
-                    <div class="md:w-1/3 h-48 md:h-auto">
-                        <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVA6r2gTngUyX1shrWPNRI79zKVDM6pESWyO8znRA2NbsxhPq18Hpi1rHcqxL4fWdZA3KKmDaY1z5i5tBfww1sqNl52025jP1ojLZTHLChXpvRrdSKbLcO0JTGmZWEqtwbenpN3PV_KN1CA7quux4BagB_S9T1DDJuBtAy93cfyeg3TD77EDCbZhDHrOaNTK49IB_fYZl32udFSohK0=w740" alt="厚切牛舌" class="w-full h-full object-cover">
+                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img src="https://img.shoplineapp.com/media/image_clips/6a1e77c4007fed09e6be246e/original.jpeg?1780381635=&owner_id=60409434dead4b0018277691" alt="厚切牛舌" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">限量澳洲厚切牛舌</h3>
-                                <span class="text-orange-400 font-bold text-xl">$660</span>
+                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
+                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">限量澳洲厚切牛舌</h3>
+                                <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 660 元</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">300g/包（±5%）</p>
-                            <p class="text-sm text-gray-300 line-clamp-3 md:line-clamp-none">
-                                頂級油花更耐煎！熟度好掌握，即便是小白也能輕易料理。<br>
-                                兩面各煎30~40秒，外表微焦內裡粉嫩，沾鹽巴或配蔥鹽做成牛舌蓋飯保證爽！
-                            </p>
+                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">300g/包（±5%）</p>
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                                澳洲和牛牛舌保有牛舌最經典的Q脆口感，但多了一層更細膩的油脂與香氣尾韻<br>
+                                頂級油花，不僅讓澳洲牛舌更為耐煎！熟度也更好掌握！<br>
+                                即便是料理小白，也能輕易料理<br>
+                                兩面各煎30~40秒，外表微焦，但一刀切開<br>
+                                肉質依然粉嫩！正是最完美熟度！<br>
+                                沾點鹽巴、擠點檸檬，或是配點柚子胡椒<br>
+                                都很搭！都很下酒！<br><br>
+                                還可以自製「厚切牛舌蓋飯」！<br>
+                                準備點熱騰騰的白飯～<br>
+                                厚切牛舌豪邁鋪上，再來點蔥鹽～<br>
+                                保證驚豔全場，保證爽！
+                            </div>
                         </div>
                         <div class="mt-4 flex items-center justify-end gap-3">
-                            <span class="text-gray-400 text-sm">訂購包數：</span>
-                            <div class="flex items-center bg-gray-900 rounded-lg border border-gray-700">
-                                <button type="button" onclick="updateQty('prod1', -1)" class="w-10 h-10 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 rounded-l-lg transition"><i class="ph ph-minus"></i></button>
-                                <input type="number" id="prod1" name="entry.2010436982" value="0" min="0" class="w-12 h-10 bg-transparent text-center text-white font-bold outline-none border-x border-gray-700 qty-input" data-price="660">
-                                <button type="button" onclick="updateQty('prod1', 1)" class="w-10 h-10 flex justify-center items-center text-orange-400 hover:text-orange-300 hover:bg-gray-700 rounded-r-lg transition"><i class="ph ph-plus"></i></button>
+                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                            <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
+                                <button type="button" onclick="updateQty('prod1', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
+                                <input type="number" id="prod1" name="entry.2010436982" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="660">
+                                <button type="button" onclick="updateQty('prod1', 1)" class="w-12 h-12 flex justify-center items-center text-orange-400 hover:text-white hover:bg-orange-500 transition active:bg-orange-600"><i class="ph ph-plus text-xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 商品 2 -->
-                <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-orange-500/50 transition-colors">
-                    <div class="md:w-1/3 h-48 md:h-auto">
-                        <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVDUcrsGa9_y8GhEd2HO4sW_-x3jnEwgM0WbV4fddlzv6XFroYUOiTfNGlXEzFB93J-wFVVGOQdb0Awjog4zU7xFM4oHvujEL0VTumLYKvvL8lkI_1IQhYN5wpIjNuspZ3jzPV4topKZuIRGEmEnPdXKV-P4_FipIRF2_gQSeCg39JSjWKfNv1zwmi5je6SbtI8xslw4HkcFwqNqCm8=w740" alt="薄切牛舌" class="w-full h-full object-cover">
+                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img src="https://shoplineimg.com/60409434dead4b0018277691/6a0fcb7d59e28ea8122880a4/800x.webp?source_format=jpg" alt="薄切牛舌" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">澳洲和牛薄切牛舌</h3>
-                                <span class="text-orange-400 font-bold text-xl">$620</span>
+                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
+                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">澳洲和牛薄切牛舌</h3>
+                                <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 620 元</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">300g/包（±5%）</p>
-                            <p class="text-sm text-gray-300 line-clamp-3 md:line-clamp-none">
-                                Q彈脆爽，油花細膩豐富口感升級！平底鍋少許油，中小火兩面煎10秒，微焦捲曲即可食用。撒點鹽巴配蔥鹽醬，讓人忍不住一片接一片。
-                            </p>
+                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">300g/包（±5%）</p>
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                                Q彈脆爽的經典牛舌口感依然迷人<br>
+                                撒點鹽巴、配上蔥鹽醬，再來一口泡菜<br>
+                                層次直接拉滿，讓人忍不住一片接一片！<br>
+                                澳洲和牛版本油花更加細膩豐富，<br>
+                                不只更耐煎、熟度更好掌握，口感也再升級！<br>
+                                即使是料理新手也能輕鬆煎出高檔燒肉店等級的美味！<br><br>
+                                <span class="text-orange-200">肉品來源：</span>澳洲<br>
+                                <span class="text-orange-200">食用方式：</span>解凍後，平底鍋倒入少許油，熱鍋後，再放入牛舌，以中小火兩面煎10秒，微焦上色微捲曲，即可食用
+                            </div>
                         </div>
                         <div class="mt-4 flex items-center justify-end gap-3">
-                            <span class="text-gray-400 text-sm">訂購包數：</span>
-                            <div class="flex items-center bg-gray-900 rounded-lg border border-gray-700">
-                                <button type="button" onclick="updateQty('prod2', -1)" class="w-10 h-10 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 rounded-l-lg transition"><i class="ph ph-minus"></i></button>
-                                <input type="number" id="prod2" name="entry.1697794587" value="0" min="0" class="w-12 h-10 bg-transparent text-center text-white font-bold outline-none border-x border-gray-700 qty-input" data-price="620">
-                                <button type="button" onclick="updateQty('prod2', 1)" class="w-10 h-10 flex justify-center items-center text-orange-400 hover:text-orange-300 hover:bg-gray-700 rounded-r-lg transition"><i class="ph ph-plus"></i></button>
+                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                            <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
+                                <button type="button" onclick="updateQty('prod2', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
+                                <input type="number" id="prod2" name="entry.1697794587" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="620">
+                                <button type="button" onclick="updateQty('prod2', 1)" class="w-12 h-12 flex justify-center items-center text-orange-400 hover:text-white hover:bg-orange-500 transition active:bg-orange-600"><i class="ph ph-plus text-xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 商品 3 -->
-                <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-orange-500/50 transition-colors">
-                    <div class="md:w-1/3 h-48 md:h-auto">
-                        <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVCn-5C3Nzad7RIG9ttyR8nd7WTm_gj9x8XjXcfkHsK2BQJeEGVvsRRf5tueoP5CiZqeYwQbavUeoTmDzCiJRt_lA4x57Hcm-J-qv_GejITDsoZhnNgBZ81PhZFKzSPVDcEWY6WSlbe-Muc6Z11CeRXokp0e0q_rQrrbbdlJ2U_gx9HVTcvXv4F-KHLzkJiAexgrNFPDMsdx7GMuZynO=w740" alt="橫膈牛排" class="w-full h-full object-cover">
+                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img src="https://shoplineimg.com/60409434dead4b0018277691/661766cd84260b0011fa4bee/800x.webp?source_format=jpg" alt="橫膈牛排" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">橫膈牛排 (美國)</h3>
-                                <span class="text-orange-400 font-bold text-xl">$490</span>
+                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
+                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">橫膈牛排 (美國)</h3>
+                                <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 490 元</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">300g/包（±10%）</p>
-                            <p class="text-sm text-gray-300 line-clamp-3 md:line-clamp-none">
-                                刻意保留部分油脂，留下橫膈膜最迷人的香氣味道。解凍分切後，放入平底鍋煎至金黃焦脆，或是烤箱/氣炸鍋180~200度烘烤15~20分鐘。
-                            </p>
+                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">300g/包（±10%）</p>
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                                很多燒肉店，<br>
+                                很多燒肉店，會把橫膈膜的油脂修得很乾淨。<br>
+                                但香氣，也一起修掉了。<br>
+                                我們刻意保留部分油脂，就是想留下橫膈牛排最迷人的味道。<br><br>
+                                <span class="text-orange-200">肉品來源：</span>美國<br>
+                                <span class="text-orange-200">食用方式：</span><br>
+                                （1）解凍後，分切成好入口的大小，保留油脂不需清修，放入熱鍋完成的平底鍋煎至金黃焦脆，即可食用。<br>
+                                （2）解凍後，分切成好入口的大小，保留油脂不需清修，放入烤箱或是氣炸鍋，以180～200度烘烤15～20分鐘（不同設備功率可能會有些不同，須自行微調時間和溫度，建議加熱時間先短一點，視需求再增加），直到肉熟、表皮酥脆即可，可再沾玫瑰鹽或是燒肉醬食用。
+                            </div>
                         </div>
                         <div class="mt-4 flex items-center justify-end gap-3">
-                            <span class="text-gray-400 text-sm">訂購包數：</span>
-                            <div class="flex items-center bg-gray-900 rounded-lg border border-gray-700">
-                                <button type="button" onclick="updateQty('prod3', -1)" class="w-10 h-10 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 rounded-l-lg transition"><i class="ph ph-minus"></i></button>
-                                <input type="number" id="prod3" name="entry.1563199181" value="0" min="0" class="w-12 h-10 bg-transparent text-center text-white font-bold outline-none border-x border-gray-700 qty-input" data-price="490">
-                                <button type="button" onclick="updateQty('prod3', 1)" class="w-10 h-10 flex justify-center items-center text-orange-400 hover:text-orange-300 hover:bg-gray-700 rounded-r-lg transition"><i class="ph ph-plus"></i></button>
+                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                            <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
+                                <button type="button" onclick="updateQty('prod3', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
+                                <input type="number" id="prod3" name="entry.1563199181" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="490">
+                                <button type="button" onclick="updateQty('prod3', 1)" class="w-12 h-12 flex justify-center items-center text-orange-400 hover:text-white hover:bg-orange-500 transition active:bg-orange-600"><i class="ph ph-plus text-xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 商品 4 -->
-                <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-orange-500/50 transition-colors">
-                    <div class="md:w-1/3 h-48 md:h-auto">
-                        <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVAxQLgWQkFqcDcW_y-l2J7luyUkZo8DaiYcdA0NN7XXBhF0iuJr73TN6CWcPaffR-Ij0siVwVZAPEnqZuuwXuexv_2b9WvWzRbxTx_dDgGnclMEOvGXdpOosX5SMWYKsmJqbQ0ABVM7QAbmdAfqB8znniPbhKoOHZHmzn6uUwTLc9owwWLF_mq5-VayPO-_AppgXhqrpcneL2Okb_s=w740" alt="日式醬油胖翅" class="w-full h-full object-cover">
+                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img src="https://shoplineimg.com/60409434dead4b0018277691/6644746b89cf800016c5d600/800x.webp?source_format=jpg" alt="日式醬油胖翅" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">日式醬油胖翅</h3>
-                                <span class="text-orange-400 font-bold text-xl">$380</span>
+                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
+                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">日式醬油胖翅</h3>
+                                <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 380 元</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">500g/包</p>
-                            <p class="text-sm text-gray-300 line-clamp-3 md:line-clamp-none">
-                                不吃辣的新選擇！選用肥美翅中部位，日式醬油完美醃製。解凍後油煎、氣炸或放入烤箱190度烘烤15~20分鐘，香氣噴發！
-                            </p>
+                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">500g/包</p>
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                                不吃辣的朋友有新選擇啦！<br>
+                                選用肥美的翅中部位，以日式醬油完美醃製<br>
+                                只需190度烘烤15~20分鐘！<br>
+                                香氣噴發的日式醬油胖翅出爐！<br><br>
+                                <span class="text-orange-200">食用方式：</span><br>
+                                （1）解凍後，下鍋油煎至全熟，即可享用<br>
+                                （2）解凍後，放入烤箱190度烘烤15~20分鐘，即可享用。<br>
+                                （3）解凍後，放入氣炸鍋烹調至全熟，即可享用。
+                            </div>
                         </div>
                         <div class="mt-4 flex items-center justify-end gap-3">
-                            <span class="text-gray-400 text-sm">訂購包數：</span>
-                            <div class="flex items-center bg-gray-900 rounded-lg border border-gray-700">
-                                <button type="button" onclick="updateQty('prod4', -1)" class="w-10 h-10 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 rounded-l-lg transition"><i class="ph ph-minus"></i></button>
-                                <input type="number" id="prod4" name="entry.1435000113" value="0" min="0" class="w-12 h-10 bg-transparent text-center text-white font-bold outline-none border-x border-gray-700 qty-input" data-price="380">
-                                <button type="button" onclick="updateQty('prod4', 1)" class="w-10 h-10 flex justify-center items-center text-orange-400 hover:text-orange-300 hover:bg-gray-700 rounded-r-lg transition"><i class="ph ph-plus"></i></button>
+                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                            <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
+                                <button type="button" onclick="updateQty('prod4', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
+                                <input type="number" id="prod4" name="entry.1435000113" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="380">
+                                <button type="button" onclick="updateQty('prod4', 1)" class="w-12 h-12 flex justify-center items-center text-orange-400 hover:text-white hover:bg-orange-500 transition active:bg-orange-600"><i class="ph ph-plus text-xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 商品 5 -->
-                <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-orange-500/50 transition-colors">
-                    <div class="md:w-1/3 h-48 md:h-auto">
-                        <img src="https://lh7-rt.googleusercontent.com/formsz/AN7BsVBj6mD9gY_Wutr9ChmiNy3hCEiKxyQzq9smz8Rg7scFe17TmmUjf4kgBF684-05SDANL7G5p7D7U9wVGky2JD3PlFvptxA8rpMkZuXHakLGOaMfZMPlvwengG_mssioK-E0itpXM19WQu6BWnnOcbNwkme8M3AiAFpD8VEGsmxhk5r6kajfhBvRj_sBethERI9fg5gHIJnVuMPUY84q=w740" alt="椒麻胖翅" class="w-full h-full object-cover">
+                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img src="https://shoplineimg.com/60409434dead4b0018277691/641a9c05fb1f9b001cdd975d/800x.webp?source_format=jpg" alt="椒麻胖翅" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">椒麻胖翅</h3>
-                                <span class="text-orange-400 font-bold text-xl">$380</span>
+                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
+                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">椒麻胖翅</h3>
+                                <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 380 元</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">500g/包</p>
-                            <p class="text-sm text-gray-300 line-clamp-3 md:line-clamp-none">
-                                選用肥美的翅中，以麻辣醬完美醃製，陣陣麻辣香但不會太辣，絕對讓人想來手啤酒！超涮嘴～
-                            </p>
+                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">500g/包</p>
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                                選用肥美的翅中部位，以麻辣醬完美醃製<br>
+                                每口都能感受到陣陣的麻辣香，但卻不會太辣！<br>
+                                保證絕對會想來手啤酒！涮嘴啊～<br><br>
+                                <span class="text-orange-200">食用方式：</span><br>
+                                （1）解凍後，下鍋油煎至全熟，即可享用<br>
+                                （2）解凍後，放入烤箱190度烘烤15~20分鐘，即可享用。<br>
+                                （3）解凍後，放入氣炸鍋烹調至全熟，即可享用。
+                            </div>
                         </div>
                         <div class="mt-4 flex items-center justify-end gap-3">
-                            <span class="text-gray-400 text-sm">訂購包數：</span>
-                            <div class="flex items-center bg-gray-900 rounded-lg border border-gray-700">
-                                <button type="button" onclick="updateQty('prod5', -1)" class="w-10 h-10 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 rounded-l-lg transition"><i class="ph ph-minus"></i></button>
-                                <input type="number" id="prod5" name="entry.906549067" value="0" min="0" class="w-12 h-10 bg-transparent text-center text-white font-bold outline-none border-x border-gray-700 qty-input" data-price="380">
-                                <button type="button" onclick="updateQty('prod5', 1)" class="w-10 h-10 flex justify-center items-center text-orange-400 hover:text-orange-300 hover:bg-gray-700 rounded-r-lg transition"><i class="ph ph-plus"></i></button>
+                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                            <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
+                                <button type="button" onclick="updateQty('prod5', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
+                                <input type="number" id="prod5" name="entry.906549067" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="380">
+                                <button type="button" onclick="updateQty('prod5', 1)" class="w-12 h-12 flex justify-center items-center text-orange-400 hover:text-white hover:bg-orange-500 transition active:bg-orange-600"><i class="ph ph-plus text-xl"></i></button>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 商品 6 -->
-                <div class="flex flex-col md:flex-row bg-gray-800/50 rounded-xl overflow-hidden border border-gray-700 hover:border-orange-500/50 transition-colors">
-                    <div class="md:w-1/3 h-48 md:h-auto">
-                        <img src="https://lh7-rt.googleusercontent.com/formsz/1I35FzjJ2xM8cQHB4YjtaJgmphM31sTct8Rhw8oR_Y9opRUk=w740" alt="紅燒牛舌" class="w-full h-full object-cover">
+                <div class="flex flex-col md:flex-row bg-[rgba(31,41,55,0.6)] rounded-xl overflow-hidden border border-gray-700 product-card-hover group relative z-10">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img src="https://cdn.phototourl.com/free/2026-06-12-d92306b7-8df8-45fe-ac81-a4dac964959e.jpg" alt="紅燒牛舌" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="md:w-2/3 p-5 flex flex-col justify-between">
                         <div>
-                            <div class="flex justify-between items-start mb-2">
-                                <h3 class="text-xl font-bold text-white">紅燒牛舌 (紐西蘭)</h3>
-                                <span class="text-orange-400 font-bold text-xl">$260</span>
+                            <div class="flex flex-col md:flex-row md:justify-between items-start mb-2 gap-2">
+                                <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-orange-400 drop-shadow-sm">紅燒牛舌 (紐西蘭)</h3>
+                                <span class="text-orange-400 font-black text-2xl drop-shadow-md whitespace-nowrap">每包 260 元</span>
                             </div>
-                            <p class="text-sm text-gray-400 mb-2">500g/包（±10%）</p>
-                            <p class="text-sm text-gray-300 line-clamp-3 md:line-clamp-none">
-                                慢火燉煮紅燒風味，口感像牛腱般軟嫩。濃郁醬汁依喜好加入麵條，直接升級超滿足紅燒牛舌麵！解凍加熱至全熟即可食用。
-                            </p>
+                            <p class="text-sm text-orange-200/80 mb-2 font-medium tracking-wide">500g/包（±10%）</p>
+                            <div class="text-sm text-gray-300 leading-relaxed space-y-1">
+                                慢火燉煮成紅燒風味<br>
+                                口感像牛腱般軟嫩好咬<br>
+                                濃郁鹹香的醬汁自依個人喜好加上喜歡的麵條<br>
+                                直接升級成一碗超滿足的紅燒牛舌麵<br>
+                                絕對飽足！販售不包含麵條哦<br><br>
+                                <span class="text-orange-200">食用方式：</span>完整解凍後，倒入鍋中加熱至全熟，即可食用<br>
+                                <span class="text-orange-200">肉品來源：</span>紐西蘭
+                            </div>
                         </div>
-                        <div class="mt-4 flex items-center justify-end gap-3">
-                            <span class="text-gray-400 text-sm">訂購包數：</span>
-                            <div class="flex items-center bg-gray-900 rounded-lg border border-gray-700">
-                                <button type="button" onclick="updateQty('prod6', -1)" class="w-10 h-10 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 rounded-l-lg transition"><i class="ph ph-minus"></i></button>
-                                <input type="number" id="prod6" name="entry.1243317079" value="0" min="0" class="w-12 h-10 bg-transparent text-center text-white font-bold outline-none border-x border-gray-700 qty-input" data-price="260">
-                                <button type="button" onclick="updateQty('prod6', 1)" class="w-10 h-10 flex justify-center items-center text-orange-400 hover:text-orange-300 hover:bg-gray-700 rounded-r-lg transition"><i class="ph ph-plus"></i></button>
+                        <div class="mt-5 flex items-center justify-end gap-3 border-t border-gray-700/50 pt-4">
+                            <span class="text-gray-300 font-medium text-lg">訂購包數：</span>
+                            <div class="flex items-center bg-gray-900 rounded-xl border border-gray-600 shadow-inner overflow-hidden">
+                                <button type="button" onclick="updateQty('prod6', -1)" class="w-12 h-12 flex justify-center items-center text-gray-400 hover:text-white hover:bg-gray-700 transition active:bg-gray-600"><i class="ph ph-minus text-xl"></i></button>
+                                <input type="number" id="prod6" name="entry.1243317079" value="0" min="0" class="w-14 h-12 bg-transparent text-center text-white text-xl font-bold outline-none border-x border-gray-600 qty-input" data-price="260">
+                                <button type="button" onclick="updateQty('prod6', 1)" class="w-12 h-12 flex justify-center items-center text-orange-400 hover:text-white hover:bg-orange-500 transition active:bg-orange-600"><i class="ph ph-plus text-xl"></i></button>
                             </div>
                         </div>
                     </div>
@@ -269,76 +355,106 @@
         </section>
 
         <!-- 區塊 3：收件與匯款資訊 -->
-        <section class="glass-card rounded-2xl p-6 md:p-8">
-            <h2 class="text-2xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
-                <i class="ph ph-truck"></i> 收件與匯款資訊
+        <section class="glass-card rounded-2xl p-6 md:p-8 shadow-lg">
+            <h2 class="text-2xl md:text-3xl font-bold text-orange-400 border-b border-gray-700 pb-3 mb-6 flex items-center gap-2">
+                <i class="ph-fill ph-truck"></i> 收件與匯款資訊
             </h2>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">收件人姓名 <span class="text-red-500">*</span></label>
-                    <input type="text" name="entry.739414769" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="王大明">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
+                <div class="flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">收件人姓名 <span class="text-red-500">*</span></label>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="text" name="entry.739414769" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors" placeholder="王大明">
+                    </div>
                 </div>
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">收件人電話 <span class="text-red-500">*</span></label>
-                    <input type="tel" name="entry.1139850918" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="0912345678">
+                <div class="flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">收件人電話 <span class="text-red-500">*</span></label>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="tel" name="entry.1139850918" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors tracking-wider" placeholder="0912345678">
+                    </div>
                 </div>
-                <div class="md:col-span-2 focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">郵遞區號+收件地址 <span class="text-red-500">*</span></label>
-                    <input type="text" name="entry.236277966" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="100 台北市信義區...">
+                <div class="md:col-span-2 flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">郵遞區號+收件地址 <span class="text-red-500">*</span></label>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="text" name="entry.236277966" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors" placeholder="100 台北市信義區...">
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-6 md:mb-8">
                 <!-- 隱藏原生 Google Form 要求的獨立日期欄位，由前端組裝 -->
                 <input type="hidden" id="entry_year" name="entry.622339373_year">
                 <input type="hidden" id="entry_month" name="entry.622339373_month">
                 <input type="hidden" id="entry_day" name="entry.622339373_day">
                 
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">轉帳日期 <span class="text-red-500">*</span></label>
-                    <input type="date" id="transfer_date" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium text-white [color-scheme:dark]">
+                <div class="flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">轉帳日期 <span class="text-red-500">*</span></label>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="date" id="transfer_date" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium text-white [color-scheme:dark] focus:border-orange-500 focus:bg-gray-800 transition-colors uppercase">
+                    </div>
                 </div>
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">匯款帳戶末五碼 <span class="text-red-500">*</span></label>
-                    <input type="text" name="entry.1998422576" required pattern="[A-Za-z0-9]{5}" maxlength="5" class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="例如：12345">
+                <div class="flex flex-col gap-2">
+                    <label class="text-base md:text-lg font-semibold text-gray-200 ml-1">匯款帳戶末五碼 <span class="text-red-500">*</span></label>
+                    <!-- 特別凸顯的匯款帳號提示框 -->
+                    <div class="mt-1 mb-2 p-3 md:p-4 bg-gradient-to-r from-orange-600/20 to-orange-500/10 border border-orange-500/50 rounded-xl flex items-start md:items-center gap-3 shadow-sm">
+                        <i class="ph-fill ph-bank text-orange-400 text-2xl md:text-3xl mt-0.5 md:mt-0"></i>
+                        <div>
+                            <p class="text-xs md:text-sm text-orange-200 mb-0.5">請匯款至此帳戶：</p>
+                            <p class="text-base md:text-lg text-orange-400 font-bold tracking-wider">台灣銀行 (004) 034001008368</p>
+                        </div>
+                    </div>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="text" name="entry.1998422576" required pattern="[A-Za-z0-9]{5}" maxlength="5" class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors tracking-widest uppercase" placeholder="例如：12345">
+                    </div>
                 </div>
                 
-                <!-- 自動加總，唯讀或隱藏均可，這裡做成唯讀顯示給使用者看 -->
-                <div class="md:col-span-2 focus-ring rounded-lg bg-gray-800 border border-orange-500/50 p-1 transition-all bg-gradient-to-r from-gray-800 to-gray-700">
-                    <label class="block text-xs text-orange-400 px-3 pt-2">系統自動計算：匯款總金額 (包含運費) <span class="text-red-500">*</span></label>
-                    <div class="flex items-center px-3 pb-2 pt-1">
-                        <span class="text-white font-bold mr-1">$</span>
-                        <input type="number" id="calc_total" name="entry.1215688211" required readonly class="w-full bg-transparent text-white font-bold outline-none cursor-not-allowed text-xl" value="0">
+                <!-- 自動加總，唯讀 -->
+                <div class="md:col-span-2 flex flex-col gap-2 mt-4">
+                    <label class="text-lg md:text-xl font-semibold text-orange-400 ml-1 flex items-center gap-2">
+                        <i class="ph-fill ph-calculator text-2xl"></i>系統自動計算：匯款總金額 (包含運費) <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative rounded-xl transition-all shadow-[0_0_20px_rgba(249,115,22,0.1)]">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none">
+                            <span class="text-orange-400 font-black text-2xl md:text-3xl">$</span>
+                        </div>
+                        <input type="number" id="calc_total" name="entry.1215688211" required readonly class="w-full bg-gradient-to-r from-gray-900 to-gray-800 border-2 border-orange-500/50 text-orange-300 font-black text-3xl md:text-4xl px-12 py-4 md:py-5 rounded-xl outline-none cursor-not-allowed tracking-wider" value="0">
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-6">
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">個人雲端發票載具手機條碼 <span class="text-red-500">*</span></label>
-                    <p class="text-[10px] text-gray-500 px-3">團購為個人戶訂購，請勿填寫公司戶發票資訊</p>
-                    <input type="text" name="entry.843144366" required class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600" placeholder="/ABC1234">
+            <div class="grid grid-cols-1 gap-6 md:gap-8 mt-4">
+                <div class="flex flex-col gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 ml-1">
+                        <label class="text-base md:text-lg font-semibold text-gray-200">個人雲端發票載具手機條碼 <span class="text-red-500">*</span></label>
+                        <span class="text-sm text-gray-400">團購為個人戶訂購，請勿填寫公司戶發票資訊</span>
+                    </div>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <input type="text" name="entry.843144366" required class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors uppercase" placeholder="/ABC1234">
+                    </div>
                 </div>
-                <div class="focus-ring rounded-lg bg-gray-800 border border-gray-700 p-1 transition-all">
-                    <label class="block text-xs text-gray-400 px-3 pt-2">其他備註</label>
-                    <p class="text-[10px] text-gray-500 px-3">可許願到貨日期，實際依物流為主，最晚出貨為115/6/30前</p>
-                    <textarea name="entry.866165752" rows="2" class="w-full bg-transparent text-white px-3 pb-2 pt-1 outline-none font-medium placeholder-gray-600 resize-none" placeholder="如有其他需求請填寫於此..."></textarea>
+                <div class="flex flex-col gap-2">
+                    <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-3 ml-1">
+                        <label class="text-base md:text-lg font-semibold text-gray-200">其他備註</label>
+                        <span class="text-sm text-gray-400">可許願到貨日期，實際依物流為主，最晚出貨為115/6/30前</span>
+                    </div>
+                    <div class="relative focus-within:ring-4 focus-within:ring-orange-500/20 rounded-xl transition-all shadow-inner">
+                        <textarea name="entry.866165752" rows="3" class="w-full bg-gray-900/80 border-2 border-gray-600 text-white text-lg md:text-xl px-4 py-3 md:py-4 rounded-xl outline-none font-medium placeholder-gray-500 focus:border-orange-500 focus:bg-gray-800 transition-colors resize-none leading-relaxed" placeholder="如有其他需求請填寫於此..."></textarea>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- 底部結帳控制列 (固定在底部) -->
-        <div class="fixed bottom-0 left-0 w-full bg-gray-900 border-t border-gray-700 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-40 px-4 py-4 md:py-5">
+        <div class="fixed bottom-0 left-0 w-full bg-gray-900/95 backdrop-blur-md border-t border-gray-700 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] z-40 px-4 py-4 md:py-5">
             <div class="max-w-4xl mx-auto flex justify-between items-center">
                 <div class="flex flex-col">
-                    <span class="text-gray-400 text-xs md:text-sm">應付總額 (含運費)</span>
-                    <div class="flex items-end gap-2">
-                        <span class="text-3xl md:text-4xl font-black text-orange-400">$<span id="display_total">0</span></span>
-                        <span id="gift_tag" class="hidden text-xs bg-green-500/20 text-green-400 border border-green-500/50 px-2 py-1 rounded mb-1">符合贈送牛舌資格 🎉</span>
+                    <span class="text-gray-400 text-sm md:text-base font-medium">應付總額 (含運費)</span>
+                    <div class="flex items-end gap-3">
+                        <span class="text-3xl md:text-4xl font-black text-orange-400 drop-shadow-md">$<span id="display_total">0</span> 元</span>
+                        <span id="gift_tag" class="hidden text-xs md:text-sm bg-green-500/20 text-green-400 border border-green-500/50 px-2 py-1 rounded font-bold mb-1 shadow-sm whitespace-nowrap animate-pulse">符合贈送牛舌資格 🎉</span>
                     </div>
                 </div>
-                <button type="submit" class="bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-400 hover:to-yellow-500 text-gray-900 font-bold text-lg px-8 py-3 rounded-xl shadow-lg hover:shadow-orange-500/30 transform hover:-translate-y-1 transition-all active:translate-y-0">
+                <button type="submit" class="bg-gradient-to-r from-orange-500 to-orange-400 hover:from-orange-400 hover:to-yellow-500 text-gray-900 font-black text-lg md:text-xl px-8 md:px-12 py-3 md:py-4 rounded-xl shadow-lg hover:shadow-orange-500/30 transform hover:-translate-y-1 transition-all duration-200 active:translate-y-0 whitespace-nowrap ml-4">
                     確認送出訂單
                 </button>
             </div>
@@ -347,13 +463,13 @@
 
     <!-- 成功彈窗 Modal -->
     <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl shadow-2xl p-8 max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300">
-            <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i class="ph-fill ph-check-circle text-5xl text-green-500"></i>
+        <div class="bg-gray-800 border border-gray-700 rounded-3xl shadow-2xl p-8 max-w-sm w-full mx-4 transform scale-95 transition-transform duration-300">
+            <div class="w-24 h-24 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-500/30">
+                <i class="ph-fill ph-check-circle text-6xl text-green-500"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white text-center mb-2">訂單已成功送出！</h3>
-            <p class="text-gray-400 text-center mb-8">感謝您的訂購！我們已經收到您的匯款與訂單資訊，將會盡快為您安排出貨。</p>
-            <button onclick="location.reload()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 rounded-xl transition">
+            <h3 class="text-2xl md:text-3xl font-black text-white text-center mb-3">訂單已成功送出！</h3>
+            <p class="text-gray-400 text-center mb-8 text-lg">感謝您的訂購！我們已經收到您的匯款與訂單資訊，將會盡快為您安排出貨。</p>
+            <button onclick="location.reload()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold text-lg py-4 rounded-xl transition shadow-md">
                 返回或重新填寫
             </button>
         </div>
@@ -458,6 +574,68 @@
             const today = new Date().toISOString().split('T')[0];
             dateInput.value = today;
         });
+
+        const canvas = document.getElementById('embersCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+                this.y = Math.random() * height; 
+            }
+            reset() {
+                this.x = Math.random() * width;
+                this.y = height + Math.random() * 100;
+                this.size = Math.random() * 3 + 1;
+                this.speedY = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 1;
+                this.opacity = Math.random() * 0.8 + 0.2;
+                this.life = Math.random() * 100 + 50;
+                this.age = 0;
+                // 產生橘色到紅色的隨機色相 (hue: 10~40)
+                this.hue = Math.floor(Math.random() * 30) + 10;
+            }
+            update() {
+                this.y -= this.speedY;
+                this.x += this.speedX + Math.sin(this.age * 0.05) * 0.5; // 加入微微的左右飄動
+                this.age++;
+                if (this.age > this.life || this.y < 0) {
+                    this.reset();
+                }
+            }
+            draw() {
+                const currentOpacity = this.opacity * (1 - this.age / this.life);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `hsla(${this.hue}, 100%, 50%, ${currentOpacity})`;
+                ctx.shadowBlur = 15;
+                ctx.shadowColor = `hsla(${this.hue}, 100%, 50%, ${currentOpacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateEmbers() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateEmbers);
+        }
+        animateEmbers();
 
     </script>
 </body>
