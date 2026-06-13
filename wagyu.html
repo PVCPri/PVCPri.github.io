@@ -117,6 +117,25 @@
                 return false;
             }
 
+            // 處理日期格式 (Google 表單要求拆分為 _year, _month, _day)
+            const dateInput = document.querySelector('input[type="date"]');
+            if (dateInput && dateInput.value && dateInput.hasAttribute('name')) {
+                const parts = dateInput.value.split('-'); // 取得 [YYYY, MM, DD]
+                if (parts.length === 3) {
+                    const baseName = dateInput.name;
+                    const form = e.target;
+                    ['year', 'month', 'day'].forEach((suffix, idx) => {
+                        let hidden = document.createElement('input');
+                        hidden.type = 'hidden';
+                        hidden.name = `${baseName}_${suffix}`;
+                        hidden.value = parts[idx];
+                        form.appendChild(hidden);
+                    });
+                    // 移除原本的 name，避免格式不符被 Google 阻擋
+                    dateInput.removeAttribute('name');
+                }
+            }
+
             const btn = document.getElementById('submitBtn');
             if (btn) {
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> 訂單送出中...';
@@ -191,8 +210,13 @@
     </div>
 
     <!-- 主要表單區塊 -->
-    <form id="orderForm" action="https://docs.google.com/forms/u/1/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto mt-8 px-4" onsubmit="handleFormSubmit(event)">
+    <form id="orderForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" method="POST" target="hidden_iframe" class="max-w-4xl mx-auto mt-8 px-4" onsubmit="handleFormSubmit(event)">
         
+        <!-- Google 表單必備的隱藏驗證欄位 -->
+        <input type="hidden" name="fvv" value="1">
+        <input type="hidden" name="pageHistory" value="0">
+        <input type="hidden" name="fbzx" value="8909396454533120144">
+
         <!-- 步驟 1：基本資訊 -->
         <section class="bg-white rounded-xl shadow-md overflow-hidden mb-8">
             <div class="bg-brand-50 px-6 py-4 border-b border-brand-100 flex items-center">
