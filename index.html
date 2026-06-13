@@ -1,0 +1,607 @@
+
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, User, CreditCard, Beef, MapPin, Phone, Mail, CheckCircle2, AlertCircle, Receipt } from 'lucide-react';
+
+// 商品資料定義與對應的 Google Form Entry IDs
+const PRODUCTS = [
+  {
+    id: 'entry.2010436982',
+    title: '限量澳洲厚切牛舌 300g/包（±5%）',
+    price: 660,
+    desc: '澳洲和牛牛舌保有牛舌最經典的Q脆口感，但多了一層更細膩的油脂與香氣尾韻\n頂級油花，不僅讓澳洲牛舌更為耐煎！熟度也更好掌握！\n即便是料理小白，也能輕易料理\n兩面各煎30~40秒，外表微焦，但一刀切開\n肉質依然粉嫩！正是最完美熟度！\n沾點鹽巴、擠點檸檬，或是配點柚子胡椒都很搭！都很下酒！\n\n還可以自製「厚切牛舌蓋飯」！\n準備點熱騰騰的白飯～厚切牛舌豪邁鋪上，再來點蔥鹽～保證驚豔全場，保證爽！',
+    image: 'https://img.shoplineapp.com/media/image_clips/6a1e77c4007fed09e6be246e/original.jpeg?1780381635=&owner_id=60409434dead4b0018277691',
+    fallbackImg: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'entry.1697794587',
+    title: '澳洲和牛薄切牛舌300g/包（±5%）',
+    price: 620,
+    desc: 'Q彈脆爽的經典牛舌口感依然迷人\n撒點鹽巴、配上蔥鹽醬，再來一口泡菜\n層次直接拉滿，讓人忍不住一片接一片！\n澳洲和牛版本油花更加細膩豐富，\n不只更耐煎、熟度更好掌握，口感也再升級！\n即使是料理新手也能輕鬆煎出高檔燒肉店等級的美味！\n\n肉品來源：澳洲\n食用方式：解凍後，平底鍋倒入少許油，熱鍋後，再放入牛舌，以中小火兩面煎10秒，微焦上色微捲曲，即可食用',
+    image: 'https://shoplineimg.com/60409434dead4b0018277691/6a0fcb7d59e28ea8122880a4/800x.webp?source_format=jpg',
+    fallbackImg: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'entry.1563199181',
+    title: '橫膈牛排300g/包（±10%）',
+    price: 490,
+    desc: '很多燒肉店，會把橫膈膜的油脂修得很乾淨。但香氣，也一起修掉了。\n我們刻意保留部分油脂，就是想留下橫膈牛排最迷人的味道\n\n肉品來源： 美國\n食用方式：\n（1）解凍後，分切成好入口的大小，保留油脂不需清修，放入熱鍋完成的平底鍋煎至金黃焦脆，即可食用。\n（2）解凍後，放入烤箱或是氣炸鍋，以180～200度烘烤15～20分鐘（視需求增加），直到肉熟、表皮酥脆即可。',
+    image: 'https://shoplineimg.com/60409434dead4b0018277691/661766cd84260b0011fa4bee/800x.webp?source_format=jpg',
+    fallbackImg: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'entry.1435000113',
+    title: '日式醬油胖翅500g/包',
+    price: 380,
+    desc: '不吃辣的朋友有新選擇啦！\n選用肥美的翅中部位，以日式醬油完美醃製\n只需190度烘烤15~20分鐘！香氣噴發的日式醬油胖翅出爐！\n\n食用方式：\n（1）解凍後，下鍋油煎至全熟，即可享用\n（2）解凍後，放入烤箱190度烘烤15~20分鐘，即可享用。\n（3）解凍後，放入氣炸鍋烹調至全熟，即可享用。',
+    image: 'https://shoplineimg.com/60409434dead4b0018277691/6644746b89cf800016c5d600/800x.webp?source_format=jpg',
+    fallbackImg: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'entry.906549067',
+    title: '椒麻胖翅500g/包',
+    price: 380,
+    desc: '選用肥美的翅中部位，以麻辣醬完美醃製\n每口都能感受到陣陣的麻辣香，但卻不會太辣！\n保證絕對會想來手啤酒！涮嘴啊～\n\n食用方式：\n（1）解凍後，下鍋油煎至全熟，即可享用\n（2）解凍後，放入烤箱190度烘烤15~20分鐘，即可享用。\n（3）解凍後，放入氣炸鍋烹調至全熟，即可享用。',
+    image: 'https://shoplineimg.com/60409434dead4b0018277691/641a9c05fb1f9b001cdd975d/800x.webp?source_format=jpg',
+    fallbackImg: 'https://images.unsplash.com/photo-1608039755401-74207ebf0500?auto=format&fit=crop&w=800&q=80'
+  },
+  {
+    id: 'entry.1243317079',
+    title: '紅燒牛舌500g/包（±10%）',
+    price: 260,
+    desc: '慢火燉煮成紅燒風味\n口感像牛腱般軟嫩好咬\n濃郁鹹香的醬汁自依個人喜好加上喜歡的麵條\n直接升級成一碗超滿足的紅燒牛舌麵\n絕對飽足！販售不包含麵條哦\n\n食用方式：完整解凍後，倒入鍋中加熱至全熟，即可食用\n肉品來源：紐西蘭',
+    image: 'https://cdn.phototourl.com/free/2026-06-12-d92306b7-8df8-45fe-ac81-a4dac964959e.jpg',
+    fallbackImg: 'https://images.unsplash.com/photo-1588168333986-507883ee7400?auto=format&fit=crop&w=800&q=80'
+  }
+];
+
+export default function App() {
+  const [formStatus, setFormStatus] = useState('idle'); // 'idle' | 'submitting' | 'success'
+  const [copied, setCopied] = useState(false);
+  const [countdown, setCountdown] = useState(5);
+  
+  useEffect(() => {
+    let timer;
+    let closeTimeout;
+    if (formStatus === 'success') {
+      setCountdown(5);
+      // 啟動 5 秒倒數計時
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+
+      // 5 秒後執行關閉或重置
+      closeTimeout = setTimeout(() => {
+        // 嘗試關閉視窗 (針對 Line/FB/IG 等內建瀏覽器有效)
+        window.close();
+        // 備用方案：若一般電腦瀏覽器阻擋關閉，則重置回填寫狀態
+        setFormStatus('idle');
+      }, 5000);
+    }
+    return () => {
+      clearInterval(timer);
+      clearTimeout(closeTimeout);
+    };
+  }, [formStatus]);
+
+  const handleIframeLoad = () => {
+    if (formStatus === 'submitting') {
+      setFormStatus('success');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleSubmit = () => {
+    setFormStatus('submitting');
+  };
+
+  const handleImageError = (e, fallback) => {
+    e.target.src = fallback;
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('034001008368');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (formStatus === 'success') {
+    return (
+      <div className="min-h-screen bg-[#0a0402] text-stone-200 flex items-center justify-center p-4 relative overflow-hidden">
+        {/* 背景炭火氛圍 */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-600/20 blur-[128px] rounded-full animate-pulse" style={{ animationDuration: '3s' }}></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-red-600/10 blur-[128px] rounded-full animate-pulse" style={{ animationDuration: '4s' }}></div>
+        </div>
+        
+        <div className="max-w-md w-full bg-[#160a05]/90 backdrop-blur-xl border border-[#3a1d0f] rounded-2xl p-8 text-center shadow-2xl relative z-10">
+          <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(34,197,94,0.3)]">
+            <CheckCircle2 size={40} />
+          </div>
+          <h2 className="text-2xl font-bold text-white mb-4 tracking-wide">訂單已成功送出！</h2>
+          <p className="text-stone-400 mb-6 leading-relaxed">
+            感謝您的購買，我們已經收到您的表單回覆。<br/>
+            請務必確認已完成匯款，後續將盡快為您安排出貨！
+          </p>
+          <div className="bg-[#0a0402]/80 border border-[#3a1d0f] rounded-xl p-4 mb-8 shadow-inner">
+            <p className="text-orange-400 font-medium">
+              頁面將於 <span className="text-3xl font-black mx-2 text-white">{countdown}</span> 秒後自動關閉
+            </p>
+          </div>
+          <button 
+            onClick={() => {
+              setFormStatus('idle');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="w-full py-3 bg-[#2a170e] hover:bg-orange-600 text-stone-200 hover:text-white rounded-xl font-medium transition-all duration-300 border border-[#3a1d0f] hover:border-orange-500"
+          >
+            手動返回重新填寫
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0a0402] text-stone-200 font-sans selection:bg-orange-500/40 relative overflow-hidden">
+      
+      {/* 炭火與烤爐的活潑氛圍背景 (Glowing Embers Background) */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        {/* 橘色火亮點 */}
+        <div className="absolute top-[-5%] right-[-5%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-orange-600/15 blur-[120px] rounded-full animate-pulse" style={{ animationDuration: '4s' }}></div>
+        {/* 紅色熱能點 */}
+        <div className="absolute bottom-[-5%] left-[-10%] w-[500px] md:w-[700px] h-[500px] md:h-[700px] bg-red-700/15 blur-[150px] rounded-full animate-pulse" style={{ animationDuration: '6s' }}></div>
+        {/* 中央溫暖黃暈 */}
+        <div className="absolute top-[30%] left-[20%] w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-yellow-600/10 blur-[100px] rounded-full animate-pulse" style={{ animationDuration: '5s' }}></div>
+      </div>
+
+      {/* Hidden iframe for seamless submission */}
+      <iframe 
+        name="hidden_iframe" 
+        id="hidden_iframe" 
+        className="hidden" 
+        onLoad={handleIframeLoad}
+      ></iframe>
+
+      {/* Header Banner */}
+      <div className="relative h-64 md:h-80 w-full overflow-hidden z-10">
+        <img 
+          src="https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=1200&q=80" 
+          alt="BBQ Banner" 
+          className="absolute inset-0 w-full h-full object-cover opacity-50 mix-blend-overlay"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0402] via-[#0a0402]/60 to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 max-w-4xl mx-auto xl:left-1/2 xl:-translate-x-1/2">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-3 tracking-tight drop-shadow-lg">
+            精選夯牛商品
+          </h1>
+          <p className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-300 font-bold text-lg md:text-xl drop-shadow-md">
+            嚴選頂級肉品，在家享受高級燒肉店的美味
+          </p>
+        </div>
+      </div>
+
+      <main className="max-w-4xl mx-auto px-4 py-8 md:py-12 -mt-6 relative z-10">
+        
+        {/* 活潑且具質感的優惠資訊區塊 (VIP Coupon Style) */}
+        <div className="bg-gradient-to-br from-[#1c0d06] via-[#160a05] to-[#261005] border border-orange-500/40 rounded-2xl p-0.5 mb-6 shadow-[0_10px_40px_-10px_rgba(234,88,12,0.2)] relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none group-hover:bg-orange-500/20 transition-all duration-700"></div>
+          
+          <div className="bg-[#0a0402]/90 backdrop-blur-sm rounded-[14px] p-2 md:p-3 relative z-10 border border-white/5">
+            <div className="absolute top-1 right-2 text-orange-500/10 pointer-events-none">
+              <Beef size={60} strokeWidth={1} />
+            </div>
+
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-yellow-400 to-orange-600 flex items-center justify-center shadow-lg shadow-orange-500/30 animate-pulse">
+                <span className="text-white text-[10px]">✨</span>
+              </div>
+              <h2 className="text-base md:text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-white to-orange-200 tracking-wide">
+                專屬團購優惠看這邊
+              </h2>
+            </div>
+            
+            <div className="space-y-1.5 relative z-10">
+              {/* 免運優惠 - 條列式票券設計 */}
+              <div className="flex flex-col md:flex-row gap-1.5 items-stretch md:items-center p-1.5 md:px-3 md:py-2 bg-gradient-to-r from-emerald-950/40 to-transparent rounded-lg border-l-4 border-emerald-500 hover:bg-emerald-900/30 transition-colors">
+                <div className="flex-1">
+                  <div className="flex items-center mb-0.5">
+                    <span className="text-base mr-1.5">🚚</span>
+                    <h3 className="text-emerald-400 font-bold text-sm md:text-base tracking-wide">免運優惠</h3>
+                  </div>
+                  <p className="text-stone-200 font-medium text-xs md:text-sm ml-6 leading-snug">
+                    單筆訂單滿 <span className="text-emerald-400 font-black text-base md:text-lg mx-1">$1299</span> 享免運！
+                  </p>
+                </div>
+                
+                {/* 顯眼的冷凍運費提醒區塊 */}
+                <div className="bg-cyan-950/40 border border-cyan-500/40 rounded-md p-1 md:px-2.5 flex items-center shadow-inner md:min-w-[180px]">
+                  <span className="text-lg mr-1.5 animate-bounce">❄️</span>
+                  <div>
+                    <p className="text-cyan-300 text-[9px] font-bold tracking-wider mb-0.5">未滿 $1299</p>
+                    <p className="text-cyan-100 text-[11px] leading-snug">
+                      酌收冷凍運費 <strong className="text-cyan-400 text-sm tracking-wide ml-0.5">$200</strong>
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 滿額贈品 - 條列式票券設計 */}
+              <div className="flex flex-col md:flex-row gap-1.5 items-stretch md:items-center p-1.5 md:px-3 md:py-2 bg-gradient-to-r from-orange-950/40 to-transparent rounded-lg border-l-4 border-orange-500 hover:bg-orange-900/30 transition-colors">
+                <div className="flex-1">
+                  <div className="flex items-center mb-0.5">
+                    <span className="text-base mr-1.5">🎁</span>
+                    <h3 className="text-orange-400 font-bold text-sm md:text-base tracking-wide">滿額好禮</h3>
+                  </div>
+                  <p className="text-stone-200 font-medium text-xs md:text-sm ml-6 leading-snug">
+                    單筆滿 <span className="text-orange-400 font-black text-base md:text-lg mx-1">$1800</span><br className="md:hidden" /> 
+                    贈 <strong className="text-orange-300 ml-1">「紅燒牛舌 1包」</strong>
+                  </p>
+                </div>
+                
+                {/* 官網差異小彩蛋區塊 */}
+                <div className="bg-[#2a1205]/60 border border-orange-500/30 rounded-md p-1 md:px-2.5 flex items-center shadow-inner md:min-w-[180px]">
+                  <span className="text-lg mr-1.5 opacity-90">🤫</span>
+                  <div>
+                    <p className="text-orange-300 text-[9px] font-bold tracking-wider mb-0.5">偷偷說</p>
+                    <p className="text-orange-100 text-[11px] leading-snug">
+                      官網要滿 <strong className="text-orange-400 text-xs mx-0.5">$2000</strong> 才有喔
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {}
+        <form 
+          action="https://docs.google.com/forms/u/1/d/e/1FAIpQLSeDJKDb983YpCtxveWpapOheY5mnRMsQ9fdcDLnHo7lodMD7Q/formResponse" 
+          method="POST" 
+          target="hidden_iframe"
+          onSubmit={handleSubmit}
+          className="space-y-10"
+        >
+          {/* Required Hidden Fields for Google Forms */}
+          <input type="hidden" name="fvv" value="1" />
+          <input type="hidden" name="fbzx" value="4589145964798345913" />
+          <input type="hidden" name="pageHistory" value="0" />
+
+          {/* Section: Products */}
+          <section>
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                <Beef className="text-orange-500" size={24} />
+              </div>
+              <h2 className="text-2xl font-bold text-white tracking-wide">嚴選肉品區</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {PRODUCTS.map((prod) => (
+                <div key={prod.id} className="bg-[#160a05]/80 backdrop-blur-md border border-[#3a1d0f] rounded-2xl overflow-hidden hover:border-orange-500/50 hover:shadow-[0_10px_30px_-10px_rgba(234,88,12,0.3)] hover:-translate-y-1.5 transition-all duration-300 group flex flex-col">
+                  <div className="h-48 overflow-hidden relative bg-[#0a0402] shrink-0 border-b border-[#3a1d0f]">
+                    <img 
+                      src={prod.image} 
+                      onError={(e) => handleImageError(e, prod.fallbackImg)}
+                      alt={prod.title} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#160a05] via-transparent to-transparent opacity-80" />
+                    <div className="absolute top-3 right-3 bg-[#0a0402]/80 backdrop-blur-md px-3 py-1 rounded-full text-orange-400 font-bold border border-orange-500/30 shadow-lg">
+                      {prod.price} 元 / 包
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <h3 className="text-lg font-bold text-white mb-2 tracking-wide group-hover:text-orange-400 transition-colors">{prod.title}</h3>
+                    
+                    {/* 商品介紹格式化呈現 */}
+                    <div className="text-sm md:text-[15px] leading-relaxed mb-6 flex-1 space-y-0.5">
+                      {prod.desc.split('\n').map((line, i) => {
+                        if (!line.trim()) return <div key={i} className="h-1.5"></div>;
+                        
+                        // 匹配「標題：」如「肉品來源：」、「食用方式：」
+                        const colonMatch = line.match(/^(.*?：)(.*)/);
+                        // 匹配步驟如「（1）解凍後...」
+                        const stepMatch = line.match(/^(（\d+）)(.*)/);
+                        
+                        if (colonMatch) {
+                          return (
+                            <div key={i} className="mt-2.5 text-stone-200">
+                              <span className="text-orange-400 font-bold mr-1">{colonMatch[1]}</span>
+                              {colonMatch[2]}
+                            </div>
+                          );
+                        } else if (stepMatch) {
+                          return (
+                            <div key={i} className="flex items-start ml-1 mt-1 text-stone-300">
+                              <span className="text-yellow-500 font-bold shrink-0 mr-1">{stepMatch[1]}</span>
+                              <span>{stepMatch[2]}</span>
+                            </div>
+                          );
+                        } else {
+                          return <p key={i} className="text-stone-400">{line}</p>;
+                        }
+                      })}
+                    </div>
+
+                    <div className="mt-auto pt-4 border-t border-[#3a1d0f]/50">
+                      <label className="block text-sm font-medium text-orange-200/80 mb-2">訂購數量 (包)</label>
+                      <input 
+                        type="number" 
+                        name={prod.id}
+                        min="0"
+                        placeholder="請輸入需要的包數"
+                        className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <hr className="border-[#3a1d0f]" />
+
+          {}
+          {/* Section: Personal Info */}
+          <section>
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                <User className="text-orange-500" size={24} />
+              </div>
+              <h2 className="text-2xl font-bold text-white tracking-wide">收件人資訊</h2>
+            </div>
+            
+            <div className="bg-[#160a05]/80 backdrop-blur-md border border-[#3a1d0f] rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    電子郵件 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" size={18} />
+                    <input 
+                      type="email" 
+                      name="emailAddress"
+                      required
+                      placeholder="example@gmail.com"
+                      className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl pl-10 pr-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    FB 名稱 <span className="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    name="entry.716533617"
+                    required
+                    placeholder="您在 Facebook 的顯示名稱"
+                    className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    收件人姓名 <span className="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    name="entry.739414769"
+                    required
+                    placeholder="真實姓名"
+                    className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    收件人電話 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-500" size={18} />
+                    <input 
+                      type="tel" 
+                      name="entry.1139850918"
+                      required
+                      placeholder="09xx-xxx-xxx"
+                      className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl pl-10 pr-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-300 mb-2">
+                  郵遞區號 + 地址 <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-3.5 text-stone-500" size={18} />
+                  <textarea 
+                    name="entry.236277966"
+                    required
+                    rows="2"
+                    placeholder="請填寫完整收件地址"
+                    className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl pl-10 pr-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all resize-none shadow-inner"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <hr className="border-[#3a1d0f]" />
+
+          {}
+          {/* Section: Payment Info */}
+          <section>
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-2 bg-orange-500/10 rounded-lg border border-orange-500/20">
+                <ShoppingBag className="text-orange-500" size={24} />
+              </div>
+              <h2 className="text-2xl font-bold text-white tracking-wide">匯款與發票資訊</h2>
+            </div>
+
+            <div className="bg-[#160a05]/80 backdrop-blur-md border border-[#3a1d0f] rounded-2xl p-6 md:p-8 space-y-6 shadow-xl">
+              
+              {/* 質感收款帳戶區塊 (Credit Card / Receipt Style) */}
+              <div className="bg-gradient-to-br from-[#2a1205] to-[#0a0402] border border-[#3a1d0f] rounded-2xl p-1 mb-8 shadow-xl hover:shadow-[0_10px_30px_-10px_rgba(234,88,12,0.15)] transition-shadow duration-300">
+                <div className="bg-[#160a05] rounded-xl p-5 md:p-7 relative overflow-hidden border border-white/5">
+                  {/* 背景裝飾 */}
+                  <div className="absolute -right-6 -top-6 w-32 h-32 bg-orange-600/10 rounded-full blur-2xl"></div>
+                  <div className="absolute right-4 bottom-4 text-[#2a170e] pointer-events-none">
+                    <CreditCard size={120} strokeWidth={0.5} />
+                  </div>
+
+                  <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-2 text-white font-bold text-xl mb-2">
+                        <div className="w-8 h-8 rounded-lg bg-orange-500/20 flex items-center justify-center border border-orange-500/30">
+                          <Receipt size={18} className="text-orange-400" />
+                        </div>
+                        <span className="tracking-wide">收款帳戶資訊</span>
+                      </div>
+                      <p className="text-stone-400 text-sm leading-relaxed max-w-md">
+                        請先完成匯款後，再於下方填寫匯款資訊，以利我們為您快速進行對帳作業。
+                      </p>
+                    </div>
+
+                    {/* 銀行帳號卡片 */}
+                    <div className="bg-[#0a0402]/80 border border-[#3a1d0f] rounded-xl p-4 md:min-w-[280px] shadow-inner backdrop-blur-sm group hover:border-orange-500/50 transition-colors duration-300">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="text-xs font-bold text-stone-500 uppercase tracking-wider">Bank Name</span>
+                        <span className="text-xs font-medium text-orange-400 bg-orange-400/10 px-2 py-0.5 rounded border border-orange-500/20">代碼 004</span>
+                      </div>
+                      <div className="text-stone-200 font-medium mb-3">臺灣銀行</div>
+                      
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-stone-500 uppercase tracking-wider block mb-1">Account Number</span>
+                          <span className="font-mono font-bold text-2xl tracking-wider text-orange-50 select-all cursor-text drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]" title="點擊全選">
+                            034001008368
+                          </span>
+                        </div>
+                        <button 
+                          type="button"
+                          onClick={handleCopy}
+                          className="mb-1 p-2 rounded-lg bg-[#2a170e] text-stone-400 hover:bg-orange-600 hover:text-white transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-orange-500/50 border border-[#3a1d0f] hover:border-orange-500"
+                          title="複製帳號"
+                        >
+                          {copied ? <CheckCircle2 size={18} /> : <span className="text-xs font-bold px-1">複製</span>}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    匯款總金額 <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input 
+                      type="number" 
+                      name="entry.1215688211"
+                      required
+                      placeholder="包含運費的總額"
+                      className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 pr-10 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-stone-500 font-medium pointer-events-none">元</span>
+                  </div>
+                  <p className="text-xs text-stone-500 mt-2">未滿1299，需加冷凍運費200元</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    匯款末五碼 <span className="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    name="entry.1998422576"
+                    required
+                    maxLength="5"
+                    placeholder="帳號最後 5 碼"
+                    className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-stone-300 mb-2">
+                    轉帳日期 <span className="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="date" 
+                    name="entry.622339373"
+                    required
+                    className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all shadow-inner"
+                    style={{ colorScheme: 'dark' }}
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <label className="block text-sm font-medium text-stone-300 mb-2">
+                  個人雲端發票載具手機條碼 <span className="text-red-500">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  name="entry.843144366"
+                  required
+                  placeholder="例如: /AB12345"
+                  className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all uppercase shadow-inner"
+                />
+                <p className="text-xs text-orange-500/80 mt-2">團購為個人戶訂購，請勿填寫公司戶發票資訊</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-stone-300 mb-2">
+                  其他備註
+                </label>
+                
+                {/* 顯眼的出貨日提示區塊 */}
+                <div className="mb-3 p-3 bg-red-950/30 border border-red-500/40 rounded-lg flex items-start space-x-2 shadow-inner">
+                  <AlertCircle size={18} className="text-red-400 shrink-0 mt-0.5" />
+                  <div className="text-sm text-red-200/90 leading-relaxed">
+                    <p>可許願到貨日期 (實際運送依物流為主)</p>
+                    <p className="font-bold text-red-400 text-base mt-1 tracking-wide">⚠️ 最晚出貨日為 115/06/30 之前</p>
+                  </div>
+                </div>
+
+                <textarea 
+                  name="entry.866165752"
+                  rows="3"
+                  placeholder="請填寫您的其他備註或需求..."
+                  className="w-full bg-[#0a0402] border border-[#3a1d0f] rounded-xl px-4 py-3 text-white placeholder-stone-600 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all resize-y shadow-inner"
+                ></textarea>
+              </div>
+            </div>
+          </section>
+
+          {/* Submit Button */}
+          <div className="pt-6 pb-12">
+            <button 
+              type="submit"
+              disabled={formStatus === 'submitting'}
+              className="w-full md:w-auto md:min-w-[240px] flex items-center justify-center space-x-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 disabled:from-[#2a170e] disabled:to-[#2a170e] disabled:text-stone-500 disabled:cursor-not-allowed text-white text-lg font-bold py-4 px-8 rounded-xl transition-all shadow-[0_0_20px_rgba(234,88,12,0.4)] active:scale-95 mx-auto border border-orange-500/50"
+            >
+              {formStatus === 'submitting' ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-stone-500 border-t-white rounded-full animate-spin"></div>
+                  <span className="tracking-wide">送出訂單中...</span>
+                </>
+              ) : (
+                <span className="tracking-wide">確認並送出訂單</span>
+              )}
+            </button>
+            <p className="text-center text-stone-500 mt-4 text-sm tracking-wide">
+              為確保成功送出請點擊後等待五秒才關閉頁面
+            </p>
+          </div>
+
+        </form>
+      </main>
+    </div>
+  );
+}
