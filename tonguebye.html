@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>厚切牛舌告別優惠 | 限量優惠團購</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <!-- 引入 FontAwesome 圖示 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff8f1',
+                            100: '#feecdc',
+                            200: '#fcd9bd',
+                            300: '#fdba8c',
+                            400: '#ff8a4c',
+                            500: '#ff5a1f',
+                            600: '#d03801',
+                            700: '#b43403',
+                            800: '#8a2c0d',
+                            900: '#771d1d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* ================= 基礎背景設定 ================= */
+        body {
+            /* 日式優雅深炭色背景 */
+            background-color: #120905;
+            color: #fef3c7;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* 木炭堆疊底紋 (Charcoal Pattern) 作為底紋 */
+        .charcoal-pattern {
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect width='160' height='160' fill='%230f0704'/%3E%3Cpath d='M-10,30 L40,10 L60,50 L0,70 Z' fill='%23170b06' stroke='%23ff5a1f' stroke-width='0.5' stroke-opacity='0.2'/%3E%3Cpath d='M50,0 L110,20 L90,70 L30,40 Z' fill='%23120804' stroke='%232b1104' stroke-width='1.5'/%3E%3Cpath d='M100,10 L170,0 L150,60 L90,50 Z' fill='%231a0c07' stroke='%232b1104' stroke-width='2'/%3E%3Cpath d='M-20,90 L30,60 L60,110 L0,140 Z' fill='%23140905' stroke='%23ff8a4c' stroke-width='0.2' stroke-opacity='0.3'/%3E%3Cpath d='M50,80 L100,60 L120,120 L70,140 Z' fill='%231a0c07' stroke='%232b1104' stroke-width='1'/%3E%3Cpath d='M110,70 L170,60 L160,130 L100,120 Z' fill='%23170b06' stroke='%23ff5a1f' stroke-width='0.4' stroke-opacity='0.15'/%3E%3Cpath d='M10,130 L60,120 L80,170 L20,180 Z' fill='%23120804' stroke='%232b1104' stroke-width='2'/%3E%3Cpath d='M70,130 L130,110 L150,170 L90,180 Z' fill='%23140905' stroke='%23ff3c00' stroke-width='0.3' stroke-opacity='0.2'/%3E%3C/svg%3E");
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.9;
+        }
+
+        /* ================= 標題真實火焰圖像特效 ================= */
+        .real-fire-icon-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
+            width: 60px;
+            height: 70px;
+        }
+        
+        .fire-outer, .fire-outer-filler, .fire-inner, .fire-inner-filler {
+            position: absolute;
+            left: 50%;
+            /* 關鍵：將變形軸心設定在底部中央，搖曳時根部才會固定 */
+            transform-origin: bottom center;
+        }
+
+        .fire-outer {
+            bottom: 0;
+            font-size: 3.8rem;
+            background: linear-gradient(0deg, #ff2a00 0%, #ff6600 35%, #ffae00 70%, #fff700 100%);
+            background-size: 100% 200%;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            filter: drop-shadow(0 0 12px rgba(255, 90, 31, 0.4));
+            /* 套用新的搖曳動畫 */
+            animation: fireFlow 1s linear infinite, outerFlameSway 1.5s ease-in-out infinite alternate;
+            z-index: 2;
+        }
+        
+        /* 填補外層大火空洞的水滴 */
+        .fire-outer-filler {
+            bottom: 12%;
+            font-size: 2.2rem;
+            color: #ff3c00;
+            animation: outerFlameSway 1.5s ease-in-out infinite alternate;
+            z-index: 1;
+        }
+
+        .fire-inner {
+            bottom: 8%;
+            font-size: 1.8rem;
+            background: linear-gradient(0deg, #ffffff 0%, #fff200 40%, #ffae00 100%);
+            background-size: 100% 200%;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            /* 套用新的搖曳動畫 */
+            animation: fireFlow 0.8s linear infinite, innerFlameSway 1.2s ease-in-out infinite alternate;
+            z-index: 4;
+        }
+        
+        /* 填補內層火苗空洞的水滴 */
+        .fire-inner-filler {
+            bottom: 15%;
+            font-size: 1rem;
+            color: #ffffff;
+            animation: innerFlameSway 1.2s ease-in-out infinite alternate;
+            z-index: 3;
+        }
+
+        /* 手機版自適應大小 */
+        @media (max-width: 640px) {
+            .real-fire-icon-wrapper { width: 45px; height: 50px; }
+            .fire-outer { font-size: 2.5rem; }
+            .fire-outer-filler { font-size: 1.5rem; bottom: 12%; }
+            .fire-inner { font-size: 1.2rem; bottom: 8%; }
+            .fire-inner-filler { font-size: 0.6rem; bottom: 15%; }
+        }
+
+        /* 漸層向上流動 */
+        @keyframes fireFlow {
+            0% { background-position: 0% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        /* 外層大火的搖曳：加入 rotate(旋轉) 與 skewX(傾斜) 模擬風吹 */
+        @keyframes outerFlameSway {
+            0% { transform: translateX(-50%) rotate(-5deg) skewX(-2deg) scaleY(0.95); }
+            50% { transform: translateX(-50%) rotate(2deg) skewX(1deg) scaleY(1.05); }
+            100% { transform: translateX(-50%) rotate(6deg) skewX(3deg) scaleY(0.98); }
+        }
+
+        /* 內層火芯的搖曳：與外層方向/頻率稍微錯開，增加不規則的真實感 */
+        @keyframes innerFlameSway {
+            0% { transform: translateX(-50%) rotate(4deg) skewX(2deg) scaleY(0.9); filter: brightness(1); }
+            50% { transform: translateX(-50%) rotate(-2deg) skewX(-1deg) scaleY(1.1); filter: brightness(1.3); }
+            100% { transform: translateX(-50%) rotate(-6deg) skewX(-3deg) scaleY(0.95); filter: brightness(1.5) drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)); }
+        }
+
+        /* 環境熱氣與炭火大範圍光暈 */
+        .ember-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background: 
+                radial-gradient(circle at 20% 90%, rgba(255, 90, 31, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 85%, rgba(220, 56, 1, 0.2) 0%, transparent 55%),
+                radial-gradient(circle at 50% 100%, rgba(255, 138, 76, 0.1) 0%, transparent 60%);
+            animation: emberPulse 6s ease-in-out infinite alternate;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes emberPulse {
+            0% { opacity: 0.6; filter: brightness(1); }
+            100% { opacity: 1; filter: brightness(1.3); }
+        }
+
+        /* ================= 木炭與火焰特效 ================= */
+        .charcoal-fire-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 350px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* 木炭基底輪廓 */
+        .charcoal-base {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 120px;
+            /* 使用 SVG 繪製不規則木炭邊緣 */
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1000 120" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"><path d="M0,120 L0,70 Q80,20 180,60 T350,30 T550,75 T750,25 T950,55 L1000,45 L1000,120 Z" fill="%230a0502"/></svg>');
+            background-size: cover;
+            filter: drop-shadow(0 -15px 25px rgba(255, 60, 0, 0.4));
+        }
+
+        /* 炭火紅光呼吸特效 */
+        .charcoal-glow {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            width: 100%;
+            height: 150px;
+            background: radial-gradient(ellipse at 50% 100%, rgba(255, 60, 0, 0.5) 0%, rgba(220, 56, 1, 0.15) 50%, transparent 70%);
+            animation: glowBreathe 3s infinite alternate ease-in-out;
+        }
+
+        @keyframes glowBreathe {
+            0% { opacity: 0.6; filter: brightness(0.9); }
+            100% { opacity: 1; filter: brightness(1.3); }
+        }
+
+        /* 飄逸柔和火焰 */
+        .flames {
+            position: absolute;
+            bottom: 60px;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        .flame {
+            position: absolute;
+            bottom: 0;
+            width: 80px;
+            height: 180px;
+            background: linear-gradient(to top, rgba(255, 90, 31, 0.7) 0%, rgba(253, 186, 140, 0.3) 50%, transparent 100%);
+            border-radius: 50% 50% 20% 20%;
+            filter: blur(12px);
+            transform-origin: bottom center;
+            opacity: 0;
+            animation: flameRise infinite ease-in;
+        }
+
+        /* 設定不同火焰的位置與節奏 */
+        .flame:nth-child(1) { left: 15%; width: 90px; animation-duration: 3s; animation-delay: 0s; }
+        .flame:nth-child(2) { left: 35%; width: 70px; animation-duration: 4s; animation-delay: 1.2s; background: linear-gradient(to top, rgba(255, 60, 0, 0.8) 0%, rgba(255, 138, 76, 0.4) 50%, transparent 100%); }
+        .flame:nth-child(3) { left: 55%; width: 100px; animation-duration: 3.5s; animation-delay: 0.5s; }
+        .flame:nth-child(4) { left: 75%; width: 85px; animation-duration: 4.5s; animation-delay: 2s; background: linear-gradient(to top, rgba(220, 56, 1, 0.7) 0%, rgba(253, 186, 140, 0.3) 50%, transparent 100%); }
+        .flame:nth-child(5) { left: 85%; width: 60px; animation-duration: 3.2s; animation-delay: 0.8s; }
+
+        @keyframes flameRise {
+            0% { transform: scaleY(0.6) scaleX(0.8) translateX(0); opacity: 0; }
+            30% { opacity: 0.7; }
+            60% { transform: scaleY(1.3) scaleX(1.1) translateX(15px); }
+            80% { opacity: 0.3; }
+            100% { transform: scaleY(1.8) scaleX(0.9) translateX(-20px); opacity: 0; }
+        }
+
+        /* ================= 飄散的火星 (Sparks) ================= */
+        .sparks-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            /* 調低層級，讓火星飄散在背景與內容之間，不影響文字閱讀 */
+            z-index: 5; 
+            overflow: hidden;
+        }
+        .spark {
+            position: absolute;
+            bottom: -30px;
+            border-radius: 50%;
+            background-color: #ffda75; /* 提高火星明亮度 */
+            box-shadow: 0 0 12px 3px #ff5a1f, 0 0 25px 8px #dc3801;
+            /* 修正動畫衝突：將位移與閃爍分開，不用 transform 控制閃爍 */
+            animation-name: floatUp, flicker;
+            animation-timing-function: ease-in, alternate;
+            animation-iteration-count: infinite, infinite;
+            animation-direction: normal, alternate;
+            opacity: 0;
+        }
+        
+        /* 定義更多火星，創造細膩氛圍 (共15顆) */
+        .spark:nth-child(1) { left: 12%; width: 6px; height: 6px; animation-duration: 5s, 0.8s; animation-delay: 0s, 0s; }
+        .spark:nth-child(2) { left: 22%; width: 4px; height: 4px; animation-duration: 7s, 1.2s; animation-delay: 3s, 0.5s; }
+        .spark:nth-child(3) { left: 35%; width: 7px; height: 7px; animation-duration: 6s, 1s; animation-delay: 1.5s, 1s; }
+        .spark:nth-child(4) { left: 48%; width: 5px; height: 5px; animation-duration: 8s, 0.9s; animation-delay: 0.5s, 0.3s; }
+        .spark:nth-child(5) { left: 58%; width: 4px; height: 4px; animation-duration: 9s, 1.3s; animation-delay: 4s, 0.7s; }
+        .spark:nth-child(6) { left: 68%; width: 6px; height: 6px; animation-duration: 6.5s, 1.1s; animation-delay: 2s, 0.2s; }
+        .spark:nth-child(7) { left: 78%; width: 5px; height: 5px; animation-duration: 7.5s, 0.7s; animation-delay: 1s, 0.8s; }
+        .spark:nth-child(8) { left: 88%; width: 8px; height: 8px; animation-duration: 5.5s, 1s; animation-delay: 3.5s, 0.4s; }
+        .spark:nth-child(9) { left: 28%; width: 5px; height: 5px; animation-duration: 8.5s, 0.9s; animation-delay: 2.5s, 0.1s; }
+        .spark:nth-child(10){ left: 82%; width: 7px; height: 7px; animation-duration: 6.2s, 1.4s; animation-delay: 0.2s, 0.6s; }
+        .spark:nth-child(11){ left: 40%; width: 4px; height: 4px; animation-duration: 7.2s, 1.1s; animation-delay: 1.2s, 0.5s; }
+        .spark:nth-child(12){ left: 18%; width: 5px; height: 5px; animation-duration: 6.8s, 0.8s; animation-delay: 4.5s, 0.2s; }
+        .spark:nth-child(13){ left: 65%; width: 8px; height: 8px; animation-duration: 5.8s, 1.2s; animation-delay: 2.8s, 0.9s; }
+        .spark:nth-child(14){ left: 95%; width: 4px; height: 4px; animation-duration: 8.1s, 0.7s; animation-delay: 0.8s, 0.3s; }
+        .spark:nth-child(15){ left: 5%;  width: 6px; height: 6px; animation-duration: 6.9s, 1.5s; animation-delay: 3.2s, 1.1s; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            15% { opacity: 1; }
+            50% { transform: translateY(-50vh) translateX(60px); opacity: 0.9; }
+            85% { opacity: 0.4; }
+            100% { transform: translateY(-110vh) translateX(-40px); opacity: 0; }
+        }
+        @keyframes flicker {
+            /* 使用 filter 控制閃爍，避免覆蓋 floatUp 的 transform 屬性 */
+            0% { filter: brightness(0.6) contrast(1.2); }
+            100% { filter: brightness(2) contrast(1.5); }
+        }
+
+        /* ================= 元件樣式微調 ================= */
+        /* 隱藏數字輸入框的上下箭頭 */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* 商品卡片：融入黑灰色調，維持精緻半透明 */
+        .product-card {
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background-color: rgba(26, 17, 13, 0.85);
+            backdrop-filter: blur(12px);
+            color: #fef3c7;
+            border: 1px solid rgba(253, 186, 140, 0.15);
+            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+        }
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 45px -5px rgba(255, 90, 31, 0.3), 0 0 25px rgba(255, 138, 76, 0.15);
+            border-color: rgba(255, 90, 31, 0.5);
+        }
+        .selected-card {
+            border-color: #ff5a1f !important;
+            background-color: rgba(43, 22, 13, 0.95) !important;
+            box-shadow: 0 15px 35px -5px rgba(255, 90, 31, 0.25);
+        }
+
+        /* 頂級燒肉標題動態光芒 */
+        @keyframes meatGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 138, 76, 0.5), 0 0 40px rgba(255, 90, 31, 0.4); }
+            50% { text-shadow: 0 0 35px rgba(255, 90, 31, 0.8), 0 0 70px rgba(253, 186, 140, 0.6); }
+        }
+        .yakiniku-title-glow {
+            animation: meatGlow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="antialiased pb-32">
+
+    <!-- 木炭堆疊底紋 -->
+    <div class="charcoal-pattern"></div>
+
+    <!-- 環境熱氣與炭火餘燼大範圍光暈 -->
+    <div class="ember-bg"></div>
+
+    <!-- 木炭與火焰特效容器 -->
+    <div class="charcoal-fire-container">
+        <div class="charcoal-glow"></div>
+        <div class="flames">
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+            <div class="flame"></div>
+        </div>
+        <div class="charcoal-base"></div>
+    </div>
+
+    <!-- 飄散火星動態特效 -->
+    <div class="sparks-container">
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+        <div class="spark"></div>
+    </div>
+
+    <!-- 隱藏的 iframe，用於無刷新跨網域提交 Google 表單 -->
+    <iframe name="hidden_iframe" id="hidden_iframe" class="hidden"></iframe>
+
+    <!-- 頂部視覺區 (Banner)：高級燒肉店風格 -->
+    <header class="relative text-stone-100 overflow-hidden pt-28 pb-16 px-4 sm:px-6 lg:px-8 z-10 bg-transparent">
+        <div class="max-w-4xl mx-auto text-center relative z-10">
+            
+            <!-- 主標題 -->
+            <div class="flex items-center justify-center gap-2 sm:gap-5 mb-6">
+                <!-- 左側：疊加雙層火焰 -->
+                <div class="real-fire-icon-wrapper">
+                    <i class="fa-solid fa-droplet fire-outer-filler"></i>
+                    <i class="fa-solid fa-fire fire-outer"></i>
+                    <i class="fa-solid fa-droplet fire-inner-filler"></i>
+                    <i class="fa-solid fa-fire-flame-simple fire-inner"></i>
+                </div>
+                
+                <h1 class="text-4xl sm:text-7xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-red-400 yakiniku-title-glow leading-tight m-0">
+                    厚切牛舌告別優惠
+                </h1>
+
+                <!-- 右側：疊加雙層火焰 (水平翻轉，增加不對稱的自然感) -->
+                <div class="real-fire-icon-wrapper scale-x-[-1]">
+                    <i class="fa-solid fa-droplet fire-outer-filler"></i>
+                    <i class="fa-solid fa-fire fire-outer"></i>
+                    <i class="fa-solid fa-droplet fire-inner-filler"></i>
+                    <i class="fa-solid fa-fire-flame-simple fire-inner"></i>
+                </div>
+            </div>
+
+            <!-- 副標題 -->
+            <div class="max-w-2xl mx-auto text-stone-200 text-base sm:text-xl leading-relaxed font-medium space-y-4 px-4 py-2">
+                <div>
+                    厚切牛舌成本上漲許多即將告別，本批售完後，將不再販售牛舌！<br class="hidden sm:inline">
+                    官網厚切牛舌一筆訂單限購 <span class="text-amber-400 font-bold">2 件</span>，團購這邊<span class="text-amber-400 font-bold underline decoration-amber-400/70 underline-offset-4">不限定購買數量</span>且<span class="text-amber-400 font-bold underline decoration-amber-400/70 underline-offset-4">不綁定組合</span>即可享有折扣優惠價！
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- 主要表單容器 -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 mt-4">
+        
+        <!-- 對應 Google 表單的真實 Form -->
+        <form id="groupBuyForm" 
+              action="https://docs.google.com/forms/d/e/1FAIpQLSclmYJcbWSLa9kKB244EhdxdB9ykqdagelIZ1lNQvkSspWK0Q/formResponse" 
+              method="POST" 
+              target="hidden_iframe"
+              onsubmit="return handleFormSubmit(event)"
+              novalidate>
+
+            <!-- Google 表單隱藏必要驗證欄位 -->
+            <input type="hidden" name="fvv" value="1">
+            <input type="hidden" name="pageHistory" value="0">
+            <input type="hidden" name="fbzx" value="5813554457144772445">
+
+            <!-- 轉帳日期分拆隱藏欄位 (相容 Google 表單 Date 格式) -->
+            <input type="hidden" name="entry.622339373_year" id="date_year">
+            <input type="hidden" name="entry.622339373_month" id="date_month">
+            <input type="hidden" name="entry.622339373_day" id="date_day">
+
+            <!-- ================= 第一部分：訂購人資訊 ================= -->
+            <section class="mb-14 pt-4">
+                <div class="flex items-center gap-3 pb-4 mb-6">
+                    <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-stone-950 font-black flex items-center justify-center text-base shadow-lg shadow-orange-600/30">1</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-amber-100 tracking-wide">訂購人</h2>
+                    <span class="ml-auto text-xs sm:text-sm text-red-400 font-bold">* 為必填項目</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- 電子郵件 -->
+                    <div>
+                        <label for="emailAddress" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            電子郵件 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                                <i class="fa-regular fa-envelope"></i>
+                            </span>
+                            <input type="email" id="emailAddress" name="emailAddress" required
+                                   placeholder="example@gmail.com"
+                                   class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium">
+                        </div>
+                        <p class="text-sm sm:text-base text-stone-400 mt-2 font-medium">開立電子發票必備資訊之一</p>
+                    </div>
+
+                    <!-- FB名稱 -->
+                    <div>
+                        <label for="fbName" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            FB 名稱 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-blue-400 text-xl">
+                                <i class="fa-brands fa-facebook"></i>
+                            </span>
+                            <input type="text" id="fbName" name="entry.716533617" required
+                                   placeholder="請填寫您的 Facebook 顯示名稱"
+                                   class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium">
+                        </div>
+                        <p class="text-sm sm:text-base text-stone-400 mt-2 font-medium">若有訂單問題方便找人</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 第二部分：嚴選團購商品區 ================= -->
+            <section class="mb-14 pt-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 px-1">
+                    <div class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-stone-950 font-black flex items-center justify-center text-base shadow-lg shadow-orange-600/30">2</span>
+                        <h2 class="text-2xl sm:text-3xl font-black text-amber-100 tracking-wide">嚴選團購商品選購</h2>
+                    </div>
+                    <p class="text-sm sm:text-base text-stone-300 px-3 py-2 bg-stone-900/40 rounded-xl border border-stone-800 shadow-sm">
+                        <i class="fa-solid fa-circle-info text-amber-400 mr-1.5"></i>
+                        未購買品項預設 <span class="font-mono font-bold text-amber-400">0</span> 包，可點擊「＋ / －」調整包數
+                    </p>
+                </div>
+
+                <!-- 商品卡片列表容器 -->
+                <div id="productsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 由 JavaScript 動態渲染 -->
+                </div>
+            </section>
+
+            <!-- ================= 第三部分：收件與物流資訊 ================= -->
+            <section class="mb-14 pt-4">
+                <div class="flex items-center gap-3 pb-4 mb-6">
+                    <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-stone-950 font-black flex items-center justify-center text-base shadow-lg shadow-orange-600/30">3</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-amber-100 tracking-wide">收件人與配送資訊</h2>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+                    <!-- 收件人姓名 -->
+                    <div>
+                        <label for="recipientName" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            收件人姓名 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                                <i class="fa-regular fa-user"></i>
+                            </span>
+                            <input type="text" id="recipientName" name="entry.739414769" required
+                                   placeholder="請填寫真實姓名"
+                                   class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium">
+                        </div>
+                    </div>
+
+                    <!-- 收件人電話 -->
+                    <div>
+                        <label for="recipientPhone" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            收件人電話 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                                <i class="fa-solid fa-mobile-screen-button"></i>
+                            </span>
+                            <input type="tel" id="recipientPhone" name="entry.1139850918" required
+                                   placeholder="例如：0912345678"
+                                   class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 郵遞區號+地址 -->
+                <div>
+                    <label for="recipientAddress" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                        郵遞區號＋收件地址 <span class="text-red-400">*</span>
+                    </label>
+                    <div class="relative">
+                        <span class="absolute top-4 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </span>
+                        <textarea id="recipientAddress" name="entry.236277966" rows="2" required
+                                  placeholder="請填寫 3 或 5 碼郵遞區號＋完整收件地址（例如：237 新北市三峽區...）"
+                                  class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium"></textarea>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 第四部分：匯款對帳與發票備註 ================= -->
+            <section class="mb-14 pt-4">
+                <div class="flex items-center gap-3 pb-4 mb-6">
+                    <span class="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-stone-950 font-black flex items-center justify-center text-base shadow-lg shadow-orange-600/30">4</span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-amber-100 tracking-wide">匯款對帳與電子發票</h2>
+                </div>
+
+                <!-- 自動金額計算明細盒 -->
+                <div class="bg-stone-900/60 border border-stone-700 rounded-3xl p-6 mb-8 shadow-sm">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-stone-800">
+                        <div>
+                            <div class="text-sm sm:text-base font-bold uppercase tracking-wider text-amber-400 mb-1 flex items-center gap-1.5">
+                                <i class="fa-solid fa-building-columns"></i> 匯款帳戶資訊
+                            </div>
+                            <div class="text-lg sm:text-xl font-bold text-stone-100">
+                                台灣銀行 (代碼 004) ・ 帳號：<span class="font-mono text-amber-400 select-all font-black text-2xl">034001008368</span>
+                            </div>
+                        </div>
+                        <button type="button" onclick="copyBankAccount()" class="self-start sm:self-auto px-4 py-2.5 rounded-xl bg-stone-800 border border-stone-700 text-stone-200 hover:bg-stone-700 text-base font-bold transition shadow-sm">
+                            <i class="fa-regular fa-copy mr-1.5"></i>複製帳號
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-3 pt-5 text-center">
+                        <div class="bg-stone-900/40 rounded-2xl p-4 border border-stone-800 shadow-sm">
+                            <div class="text-sm sm:text-base text-stone-400 font-medium">商品小計</div>
+                            <div id="summarySubtotal" class="text-xl sm:text-2xl font-bold text-stone-100 mt-1 font-mono">NT$ 0</div>
+                        </div>
+                        <div class="bg-stone-900/40 rounded-2xl p-4 border border-stone-800 shadow-sm">
+                            <div class="text-sm sm:text-base text-stone-400 font-medium">冷凍運費</div>
+                            <div id="summaryShipping" class="text-xl sm:text-2xl font-bold text-stone-100 mt-1 font-mono">NT$ 0</div>
+                        </div>
+                        <div class="bg-gradient-to-br from-orange-600 to-red-700 text-white rounded-2xl p-4 shadow-lg shadow-orange-600/30 flex flex-col justify-center">
+                            <div class="text-sm sm:text-base text-orange-100 font-bold">應匯總金額</div>
+                            <div id="summaryTotal" class="text-xl sm:text-3xl font-black mt-1 font-mono">NT$ 0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                    <!-- 匯款總金額 -->
+                    <div>
+                        <label for="remitAmount" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            匯款總金額 (含運費) <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-stone-400 font-bold text-lg">
+                                NT$
+                            </span>
+                            <input type="text" id="remitAmount" name="entry.1215688211" required
+                                   placeholder="系統自動試算或手動輸入"
+                                   class="w-full pl-14 pr-4 py-4 rounded-2xl border border-stone-700 bg-stone-900/60 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition font-black text-amber-400 text-lg sm:text-xl shadow-sm">
+                        </div>
+                        <!-- 運費政策說明 -->
+                        <div class="mt-3 text-lg sm:text-xl font-black tracking-wide text-amber-300 px-1 py-1 inline-flex items-center gap-2">
+                            <i class="fa-solid fa-truck-fast text-amber-400 text-2xl"></i>
+                            <span>滿 1299 宅配免運；未滿運費 200 元</span>
+                        </div>
+                    </div>
+
+                    <!-- 匯款末五碼 -->
+                    <div>
+                        <label for="remitLast5" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            匯款帳號末五碼 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                                <i class="fa-solid fa-money-check-dollar"></i>
+                            </span>
+                            <input type="text" id="remitLast5" name="entry.1998422576" required maxlength="10"
+                                   placeholder="請輸入轉出帳號末 5 碼"
+                                   class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition font-mono text-lg sm:text-xl shadow-sm font-medium">
+                        </div>
+                        <p class="text-sm sm:text-base text-stone-400 mt-2 font-medium">對帳使用，請務必確認正確</p>
+                    </div>
+
+                    <!-- 轉帳日期 -->
+                    <div>
+                        <label for="remitDateInput" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            轉帳日期 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="date" id="remitDateInput" name="entry.622339373" required max="2076-01-01"
+                                   class="w-full px-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- 個人雲端發票載具手機條碼 -->
+                    <div>
+                        <label for="invoiceCarrier" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            個人雲端發票載具手機條碼 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute top-4 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                                <i class="fa-solid fa-barcode"></i>
+                            </span>
+                            <textarea id="invoiceCarrier" name="entry.843144366" rows="2" required
+                                      placeholder="例如：/ABC1234（請包含斜線 /）"
+                                      class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition font-mono text-lg sm:text-xl shadow-sm font-medium"></textarea>
+                        </div>
+                        <p class="text-sm sm:text-base text-amber-300 font-semibold mt-2">
+                            <i class="fa-solid fa-triangle-exclamation mr-1"></i>團購為個人戶訂購，請勿填寫公司戶發票資訊
+                        </p>
+                    </div>
+
+                    <!-- 其他備註 -->
+                    <div>
+                        <label for="orderNotes" class="block text-lg sm:text-xl font-bold text-amber-200 mb-2">
+                            其他備註 <span class="text-stone-500 font-normal text-base">(選填)</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute top-4 left-0 pl-4 flex items-center text-stone-400 text-xl">
+                                <i class="fa-regular fa-comment-dots"></i>
+                            </span>
+                            <textarea id="orderNotes" name="entry.866165752" rows="2"
+                                      placeholder="可許願到貨日期，實際運送依物流為主"
+                                      class="w-full pl-12 pr-4 py-4 rounded-2xl bg-stone-900/60 border border-stone-700 text-stone-100 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 outline-none transition text-lg sm:text-xl shadow-sm font-medium"></textarea>
+                        </div>
+                        <!-- 最晚出貨日提示 -->
+                        <div class="mt-3 text-lg sm:text-xl font-black tracking-wide text-red-400 px-1 py-2 inline-flex items-center gap-3">
+                            <i class="fa-solid fa-triangle-exclamation text-2xl text-red-400 shrink-0 animate-bounce"></i>
+                            <span>許願最晚出貨日為 115/11/10 之前！</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 錯誤提示訊息框 -->
+            <div id="formErrorBox" class="hidden bg-red-950/80 border-l-4 border-red-500 text-red-200 p-5 rounded-2xl mb-8 shadow-md relative z-30">
+                <div class="flex items-start gap-3">
+                    <i class="fa-solid fa-circle-exclamation text-red-400 text-xl mt-0.5"></i>
+                    <div>
+                        <h3 class="font-bold text-lg">表單還有必填項目未完成喔！</h3>
+                        <p id="formErrorText" class="text-base sm:text-lg mt-1"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 確認訂購和匯款按鈕區 -->
+            <div class="flex flex-col items-center gap-3 relative z-30 mb-8">
+                <button type="submit" id="submitBtn"
+                        class="w-full py-5 px-8 rounded-2xl bg-gradient-to-r from-orange-600 via-red-600 to-amber-600 hover:from-orange-500 hover:to-red-500 active:scale-[0.99] text-white font-black text-2xl shadow-2xl shadow-orange-600/30 transition flex items-center justify-center gap-3">
+                    <i class="fa-solid fa-paper-plane text-xl"></i>
+                    <span>確認訂購和匯款</span>
+                </button>
+                <p class="text-sm sm:text-base text-stone-400 font-bold tracking-wide">
+                    <i class="fa-solid fa-circle-info mr-1 text-amber-400"></i>為確保填寫成功，點擊送出後請停留五秒後才關閉頁面
+                </p>
+            </div>
+        </form>
+    </main>
+
+    <!-- 底部常駐浮動結帳狀態列 -->
+    <div class="fixed bottom-0 inset-x-0 bg-stone-950/90 backdrop-blur-xl text-stone-100 border-t border-stone-800 z-40 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+        <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="relative">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-xl font-bold text-stone-950 shadow-lg shadow-orange-500/30">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <span id="stickyBadgeCount" class="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-amber-400 text-stone-950 font-black text-xs flex items-center justify-center shadow">0</span>
+                </div>
+                <div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-sm sm:text-base text-stone-400 font-medium">應付總額</span>
+                        <span id="stickyTotalAmount" class="text-2xl sm:text-4xl font-black text-amber-400 font-mono">NT$ 0</span>
+                    </div>
+                    <div id="stickyShippingHint" class="text-sm sm:text-base text-stone-400 font-medium">再買 NT$ 1,299 即享免運優惠</div>
+                </div>
+            </div>
+
+            <button type="button" onclick="scrollToSubmit()" class="px-6 py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-stone-950 font-black text-lg transition shadow-lg shadow-amber-500/20 shrink-0 flex items-center gap-2">
+                <span>前往結帳</span>
+                <i class="fa-solid fa-arrow-down text-sm"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- 成功送出訂單彈跳視窗 -->
+    <div id="successModal" class="fixed inset-0 bg-stone-950/80 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-stone-900 border border-stone-700 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl text-stone-100 text-center animate-[fadeIn_0.25s_ease-out]">
+            <div class="w-16 h-16 rounded-full bg-green-950 text-green-400 flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 class="text-2xl font-black text-stone-100 mb-2">訂單與匯款資料已成功送出！</h3>
+            <p class="text-base text-stone-400 mb-6">
+                感謝您的跟團支持！資料已順利傳送至 Google 表單。
+            </p>
+
+            <!-- 訂單摘要預覽 -->
+            <div id="orderSummaryReceipt" class="bg-stone-950 rounded-2xl p-4 text-left text-base text-stone-300 border border-stone-800 mb-6 space-y-2 max-h-60 overflow-y-auto shadow-inner">
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button type="button" onclick="closeSuccessModal(true)" class="w-full py-4 rounded-2xl bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-500 hover:to-red-500 text-white font-bold text-lg transition shadow-xl shadow-orange-600/30">
+                    完成並再填一筆新訂單
+                </button>
+                <button type="button" onclick="closeSuccessModal(false)" class="w-full py-4 rounded-2xl bg-stone-800 hover:bg-stone-700 text-stone-300 font-bold text-lg transition">
+                    關閉視窗
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頂部浮動 Toast 通知 -->
+    <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden bg-stone-800 text-white px-6 py-3.5 rounded-2xl shadow-2xl text-lg font-bold items-center gap-3 border border-stone-700">
+        <i class="fa-solid fa-circle-check text-green-400 text-xl"></i>
+        <span id="toastMessage">已複製到剪貼簿</span>
+    </div>
+
+    <script>
+        /**
+         * 商品資料與 Google Form Entry ID 對應表
+         */
+        const PRODUCTS = [
+            {
+                id: 'prod_beef_tongue',
+                entryName: 'entry.2010436982',
+                title: '澳洲穀飼厚切牛舌',
+                spec: '300g/包（±5%）',
+                originalPrice: 940,
+                price: 800,
+                badge: '最後現貨・絕版告別',
+                badgeColor: 'bg-red-600 text-white',
+                origin: '澳洲',
+                image: 'https://img.shoplineapp.com/media/image_clips/6a1e77967f392dd8d429c46c/original.jpeg?1780381590=&owner_id=60409434dead4b0018277691',
+                fallbackImage: 'https://placehold.co/600x450/431407/fef3c7?text=澳洲厚切牛舌+300g',
+                desc: '澳洲和牛牛舌保有最經典的 Q 脆口感，多了一層更細膩的油脂與香氣尾韻！頂級油花更耐煎、熟度更好掌握，料理小白也能輕鬆駕馭。',
+                cooking: '兩面各煎 30~40 秒，外表微焦、一刀切開肉質粉嫩正是最完美熟度！沾鹽巴、擠檸檬或配柚子胡椒都很下酒，鋪在熱騰騰白飯上自製「蔥鹽厚切牛舌蓋飯」保證驚豔全場！'
+            },
+            {
+                id: 'prod_skirt_steak',
+                entryName: 'entry.1563199181',
+                title: '美國穀飼橫膈牛排（清修版）',
+                spec: '300g/包（±10%）',
+                originalPrice: 560,
+                price: 480,
+                badge: '燒肉店王牌・清修版',
+                badgeColor: 'bg-amber-600 text-white',
+                origin: '美國',
+                image: 'https://img.shoplineapp.com/media/image_clips/6a47674a9fb050855ff43b3e/original.jpeg?1783064393=&owner_id=60409434dead4b0018277691',
+                fallbackImage: 'https://placehold.co/600x450/7c2d12/ffedd5?text=美國穀飼橫膈牛排+300g',
+                desc: '大火一上油脂開始融化，邊緣微焦鎖住肉汁，一口咬下嫩、肉感、油香、焦香全到位！特別清修過度油脂並保留迷人脂香。',
+                cooking: '（1）平底鍋：解凍擦乾切好入口大小（保留油脂不需清修），熱鍋煎至邊緣焦香。\n（2）烤箱/氣炸鍋：180~200度烘烤 15~20 分鐘至表皮酥脆，沾玫瑰鹽或燒肉醬享用。'
+            },
+            {
+                id: 'prod_spicy_wings',
+                entryName: 'entry.906549067',
+                title: '椒麻胖翅 <i class="fa-solid fa-pepper-hot text-red-500"></i>',
+                spec: '500g/包',
+                originalPrice: 400,
+                price: 380,
+                badge: '啤酒絕配涮嘴王',
+                badgeColor: 'bg-orange-600 text-white',
+                origin: '精選翅中/二節翅',
+                image: 'https://live.staticflickr.com/65535/53617853066_b7c969bf74_c.jpg',
+                fallbackImage: 'https://placehold.co/600x450/9a3412/ffedd5?text=椒麻胖翅+500g',
+                desc: '選用肥美翅中部位以麻辣醬完美醃製，每口都能感受到陣陣麻辣香卻不會太辣！（如翅中缺貨會更改為二節翅，一樣美味喔！）',
+                cooking: '（1）油煎：解凍後下鍋油煎至全熟，兩面金黃微焦最好吃。\n（2）烤箱：190度烘烤 15~20 分鐘。\n（3）氣炸鍋：烹調至全熟與外皮酥脆即可。'
+            },
+            {
+                id: 'prod_salted_pork',
+                entryName: 'entry.1243317079',
+                title: '香料秘制鹹豬肉',
+                spec: '300g/包',
+                originalPrice: 380,
+                price: 360,
+                badge: '黃金肥瘦比例',
+                badgeColor: 'bg-stone-700 text-white',
+                origin: '台灣',
+                image: 'https://shoplineimg.com/60409434dead4b0018277691/6606538829603f00230a3989/800x.webp?source_format=jpg',
+                fallbackImage: 'https://placehold.co/600x450/57534e/fef3c7?text=香料秘制鹹豬肉+300g',
+                desc: '嚴選肥瘦均勻成黃金比例的台灣國產五花肉，以多種秘制香料搭配按摩手法醃製入味，香氣層次豐富，鮮嫩多汁不乾柴～',
+                cooking: '（1）油煎：解凍後下鍋油煎至全熟，兩面恰恰最好吃。\n（2）烤箱：190度烘烤 15~20 分鐘，切片即可享用。\n（3）氣炸鍋：烹調至全熟和酥脆外皮即可。'
+            },
+            {
+                id: 'prod_beef_char_siu',
+                entryName: 'entry.1795074034',
+                title: '秘製牛肋叉燒',
+                spec: '360g/包',
+                originalPrice: 540,
+                price: 520,
+                badge: '五星主廚秘製',
+                badgeColor: 'bg-amber-800 text-white',
+                origin: '美國',
+                image: 'https://shoplineimg.com/60409434dead4b0018277691/6675340b15d8cd001c16c16c/800x.webp?source_format=jpg',
+                fallbackImage: 'https://placehold.co/600x450/451a03/fde68a?text=香港五星主廚・秘製牛肋叉燒+360g',
+                desc: '香港五星主廚阿友師秘制比例叉燒醬，香氣爆棚鹹香夠味不膩口！選用優質美國牛肋條按摩入味，一刀切下肉質粉嫩 Q 彈。',
+                cooking: '只要用烤箱 200 度烘烤 20 分鐘，就是爆棚香氣、表皮微焦、軟嫩恰到好處的星級叉燒！'
+            },
+            {
+                id: 'prod_black_garlic_soup',
+                entryName: 'entry.447349176',
+                title: '黑蒜雞湯',
+                spec: '500g ± 5% / 包',
+                originalPrice: 240,
+                price: 220,
+                badge: '養生補氣暖湯',
+                badgeColor: 'bg-emerald-700 text-white',
+                origin: '台灣',
+                image: 'https://img.shoplineapp.com/media/image_clips/693bc16bb723a387c008cb4b/original.jpg?1765523818=&owner_id=60409434dead4b0018277691',
+                fallbackImage: 'https://placehold.co/600x450/1c1917/fde68a?text=養生黑蒜雞湯+500g',
+                desc: '無需出門、無需久煮，在家輕鬆加熱就能隨時享受一碗療癒好湯。黑蒜養生補氣 × 清爽滋補不油膩，讓身體暖起來。',
+                cooking: '解凍後，放入鍋中加熱至全熱熟透即可食用。'
+            },
+            {
+                id: 'prod_pork_tripe_soup',
+                entryName: 'entry.1444258332',
+                title: '老火豬肚雞煲湯',
+                spec: '500g ± 5% / 包',
+                originalPrice: 240,
+                price: 220,
+                badge: '濃郁乳白大骨湯',
+                badgeColor: 'bg-amber-700 text-white',
+                origin: '台灣',
+                image: 'https://img.shoplineapp.com/media/image_clips/693bc14c604b41b80df67355/original.jpg?1765523788=&owner_id=60409434dead4b0018277691',
+                fallbackImage: 'https://placehold.co/600x450/78350f/fef3c7?text=老火豬肚雞煲湯+500g',
+                desc: '真材實料使用關節處豬大骨保留骨髓慢火熬煮，湯汁呈濃郁乳白色，搭配主廚獨特刀工片出的 Q 彈台灣豬肚，暖胃首選！',
+                cooking: '完整解凍後，倒入鍋中加熱至全熟，即可食用。'
+            },
+            {
+                id: 'prod_chili_soup',
+                entryName: 'entry.175527526',
+                title: '有點辣的剝皮辣椒雞湯 <i class="fa-solid fa-pepper-hot text-red-500"></i>',
+                spec: '500g ± 5% / 包',
+                originalPrice: 240,
+                price: 220,
+                badge: '勁爽開胃不膩口',
+                badgeColor: 'bg-red-700 text-white',
+                origin: '台灣',
+                image: 'https://live.staticflickr.com/65535/53216580477_4be9d1022c_c.jpg',
+                fallbackImage: 'https://placehold.co/600x450/7f1d1d/fef2f2?text=有點辣的剝皮辣椒雞湯+500g',
+                desc: '辣度勁爽開胃、湯頭清爽無負擔，絕不是甜甜搔不到癢處的剝皮辣椒雞湯！帶皮雞腿切塊各個 Q 彈緊實飽滿。',
+                cooking: '（1）隔水加熱：解凍後放入滾水加熱 5~10 分鐘。\n（2）微波/電鍋加熱：剪開袋口倒入碗中加熱。\n（3）鍋子加熱：倒入鍋中加熱至沸騰即可。'
+            }
+        ];
+
+        const FREE_SHIPPING_THRESHOLD = 1299;
+        const SHIPPING_FEE = 200;
+
+        /**
+         * 動態生成商品卡片
+         */
+        function renderProducts() {
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = PRODUCTS.map((item, idx) => `
+                <div id="card_${item.id}" class="product-card rounded-3xl overflow-hidden flex flex-col justify-between relative z-20">
+                    <div>
+                        <!-- 商品圖片與標籤 -->
+                        <div class="relative h-60 bg-stone-900 overflow-hidden">
+                            <img src="${item.image}" 
+                                 alt="${item.title}" 
+                                 onerror="this.onerror=null; this.src='${item.fallbackImage}';"
+                                 class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+                            <div class="absolute top-3 left-3 flex gap-2">
+                                <span class="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold shadow ${item.badgeColor}">
+                                    ${item.badge}
+                                </span>
+                            </div>
+                            <div class="absolute bottom-3 right-3 bg-stone-950/80 backdrop-blur text-stone-200 px-3.5 py-1.5 rounded-xl text-xs font-semibold">
+                                產地：${item.origin}
+                            </div>
+                        </div>
+
+                        <!-- 商品文字說明 -->
+                        <div class="p-6">
+                            <div class="flex items-start justify-between gap-3 mb-3">
+                                <div>
+                                    <h3 class="text-xl sm:text-2xl font-black text-stone-100 leading-snug">${item.title}</h3>
+                                    <span class="text-base sm:text-lg text-stone-400 font-semibold">${item.spec}</span>
+                                </div>
+                                <div class="text-right shrink-0">
+                                    <span class="text-sm sm:text-base text-stone-500 line-through">官網 $${item.originalPrice}</span>
+                                    <div class="text-xs sm:text-sm text-amber-400 font-bold">團購優惠價</div>
+                                    <span class="text-2xl sm:text-3xl font-black text-amber-400 font-mono">NT$ ${item.price}</span>
+                                    <span class="text-sm sm:text-base text-stone-300">/包</span>
+                                </div>
+                            </div>
+
+                            <p class="text-lg sm:text-xl text-stone-300 leading-relaxed mt-3 font-medium">
+                                ${item.desc}
+                            </p>
+
+                            <!-- 推薦食用方式摺疊面板 -->
+                            <details class="mt-4 group bg-stone-900/60 rounded-2xl border border-stone-800 px-4 py-3 text-lg text-stone-300">
+                                <summary class="font-bold text-amber-200 cursor-pointer flex items-center justify-between list-none">
+                                    <span><i class="fa-solid fa-utensils text-amber-400 mr-2"></i>查看推薦食用方式</span>
+                                    <i class="fa-solid fa-chevron-down text-sm transition-transform group-open:rotate-180"></i>
+                                </summary>
+                                <div class="mt-3 pt-3 border-t border-stone-800 whitespace-pre-line leading-relaxed text-stone-300 font-medium">
+                                    ${item.cooking}
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
+                    <!-- 底部數量選擇器 (對應 Google Form 欄位) -->
+                    <div class="px-6 py-5 bg-stone-900/80 border-t border-stone-800 flex items-center justify-between">
+                        <label for="qty_${item.id}" class="text-lg sm:text-xl font-bold text-amber-200">
+                            訂購包數 <span class="text-red-400">*</span>
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="adjustQuantity('${item.id}', -1)"
+                                    aria-label="減少包數"
+                                    class="w-12 h-12 rounded-2xl bg-stone-800 border border-stone-700 hover:bg-stone-700 active:scale-95 text-stone-200 font-bold flex items-center justify-center transition shadow-sm text-lg">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <input type="number" 
+                                   id="qty_${item.id}" 
+                                   name="${item.entryName}" 
+                                   value="0" 
+                                   min="0" 
+                                   max="999" 
+                                   required
+                                   oninput="onQuantityInput('${item.id}')"
+                                   class="w-24 h-12 text-center font-mono font-black text-2xl rounded-2xl border border-stone-700 bg-stone-950 text-stone-100 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 outline-none shadow-sm">
+                            <button type="button" onclick="adjustQuantity('${item.id}', 1)"
+                                    aria-label="增加包數"
+                                    class="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 active:scale-95 text-stone-950 font-bold flex items-center justify-center transition shadow-sm text-lg">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * 增減商品包數
+         */
+        function adjustQuantity(prodId, delta) {
+            const input = document.getElementById(`qty_${prodId}`);
+            let current = parseInt(input.value, 10);
+            if (isNaN(current)) current = 0;
+            const nextVal = Math.max(0, current + delta);
+            input.value = nextVal;
+            updateCardHighlight(prodId, nextVal);
+            calculateTotals();
+        }
+
+        /**
+         * 直接輸入商品包數時觸發
+         */
+        function onQuantityInput(prodId) {
+            const input = document.getElementById(`qty_${prodId}`);
+            let val = parseInt(input.value, 10);
+            if (isNaN(val) || val < 0) {
+                val = 0;
+            }
+            updateCardHighlight(prodId, val);
+            calculateTotals();
+        }
+
+        /**
+         * 更新已選購商品卡片的邊框高亮狀態
+         */
+        function updateCardHighlight(prodId, qty) {
+            const card = document.getElementById(`card_${prodId}`);
+            if (!card) return;
+            if (qty > 0) {
+                card.classList.add('selected-card');
+            } else {
+                card.classList.remove('selected-card');
+            }
+        }
+
+        /**
+         * 即時計算商品小計、運費與應匯總金額
+         */
+        function calculateTotals() {
+            let subtotal = 0;
+            let totalPacks = 0;
+
+            PRODUCTS.forEach(item => {
+                const input = document.getElementById(`qty_${item.id}`);
+                const qty = Math.max(0, parseInt(input.value, 10) || 0);
+                subtotal += qty * item.price;
+                totalPacks += qty;
+            });
+
+            let shipping = 0;
+            if (subtotal > 0 && subtotal < FREE_SHIPPING_THRESHOLD) {
+                shipping = SHIPPING_FEE;
+            }
+            const grandTotal = subtotal + shipping;
+
+            // 更新表單內計算面板
+            document.getElementById('summarySubtotal').textContent = `NT$ ${subtotal.toLocaleString()}`;
+            document.getElementById('summaryShipping').textContent = shipping === 0 && subtotal > 0 ? '免運費' : `NT$ ${shipping}`;
+            document.getElementById('summaryTotal').textContent = `NT$ ${grandTotal.toLocaleString()}`;
+
+            // 自動帶入「匯款總金額」欄位
+            const remitInput = document.getElementById('remitAmount');
+            remitInput.value = grandTotal > 0 ? grandTotal : '';
+
+            // 更新底部浮動列
+            const stickyHint = document.getElementById('stickyShippingHint');
+            document.getElementById('stickyBadgeCount').textContent = totalPacks;
+            document.getElementById('stickyTotalAmount').textContent = `NT$ ${grandTotal.toLocaleString()}`;
+
+            if (subtotal === 0) {
+                stickyHint.textContent = '滿 NT$ 1,299 宅配免運';
+            } else if (subtotal < FREE_SHIPPING_THRESHOLD) {
+                const diff = FREE_SHIPPING_THRESHOLD - subtotal;
+                stickyHint.innerHTML = `含運費 $200（再湊 <span class="text-amber-400 font-bold">$${diff}</span> 享免運）`;
+            } else {
+                stickyHint.innerHTML = `<span class="text-green-400 font-bold"><i class="fa-solid fa-check mr-1"></i>已享滿 1299 宅配免運！</span>`;
+            }
+        }
+
+        /**
+         * 同步日期選擇器至 Google 表單的年/月/日隱藏欄位
+         */
+        function syncDateFields() {
+            const dateInput = document.getElementById('remitDateInput');
+            if (!dateInput.value) return;
+            const parts = dateInput.value.split('-');
+            if (parts.length === 3) {
+                document.getElementById('date_year').value = parts[0];
+                document.getElementById('date_month').value = parseInt(parts[1], 10);
+                document.getElementById('date_day').value = parseInt(parts[2], 10);
+            }
+        }
+
+        /**
+         * 複製銀行帳號功能
+         */
+        function copyBankAccount() {
+            const account = '034001008368';
+            const tempInput = document.createElement('textarea');
+            tempInput.value = account;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+
+            showToast('已複製台銀帳號：034001008368');
+        }
+
+        /**
+         * 顯示頂部通知 Toast
+         */
+        function showToast(msg) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastMessage').textContent = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2600);
+        }
+
+        /**
+         * 捲動至結帳區域
+         */
+        function scrollToSubmit() {
+            document.getElementById('recipientName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        /**
+         * 表單送出驗證與處理
+         */
+        function handleFormSubmit(event) {
+            const errorBox = document.getElementById('formErrorBox');
+            const errorText = document.getElementById('formErrorText');
+            errorBox.classList.add('hidden');
+
+            let totalPacks = 0;
+            PRODUCTS.forEach(item => {
+                const input = document.getElementById(`qty_${item.id}`);
+                if (input.value === '' || isNaN(parseInt(input.value, 10)) || parseInt(input.value, 10) < 0) {
+                    input.value = '0';
+                }
+                totalPacks += parseInt(input.value, 10);
+            });
+
+            if (totalPacks === 0) {
+                event.preventDefault();
+                errorText.textContent = '您目前尚未選購任何商品（總包數為 0），請至少選擇 1 包商品再送出訂單喔！';
+                errorBox.classList.remove('hidden');
+                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return false;
+            }
+
+            const requiredFields = [
+                { id: 'emailAddress', name: '電子郵件' },
+                { id: 'fbName', name: 'FB 名稱' },
+                { id: 'recipientName', name: '收件人姓名' },
+                { id: 'recipientPhone', name: '收件人電話' },
+                { id: 'recipientAddress', name: '郵遞區號＋收件地址' },
+                { id: 'remitAmount', name: '匯款總金額' },
+                { id: 'remitLast5', name: '匯款帳號末五碼' },
+                { id: 'remitDateInput', name: '轉帳日期' },
+                { id: 'invoiceCarrier', name: '個人雲端發票載具手機條碼' }
+            ];
+
+            for (const field of requiredFields) {
+                const el = document.getElementById(field.id);
+                if (!el.value.trim()) {
+                    event.preventDefault();
+                    errorText.textContent = `請填寫「${field.name}」欄位。`;
+                    errorBox.classList.remove('hidden');
+                    el.focus();
+                    return false;
+                }
+            }
+
+            const emailVal = document.getElementById('emailAddress').value.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailVal)) {
+                event.preventDefault();
+                errorText.textContent = '請輸入格式正確的電子郵件信箱。';
+                errorBox.classList.remove('hidden');
+                document.getElementById('emailAddress').focus();
+                return false;
+            }
+
+            syncDateFields();
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin text-2xl"></i><span>訂單傳送中，請停留 5 秒...</span>`;
+
+            buildOrderReceipt();
+
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane text-xl"></i><span>確認訂購和匯款</span>`;
+                const modal = document.getElementById('successModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }, 5000);
+
+            return true;
+        }
+
+        /**
+         * 建立成功視窗中的訂單摘要
+         */
+        function buildOrderReceipt() {
+            const receipt = document.getElementById('orderSummaryReceipt');
+            const selectedItems = PRODUCTS.map(item => {
+                const qty = parseInt(document.getElementById(`qty_${item.id}`).value, 10) || 0;
+                return { ...item, qty };
+            }).filter(i => i.qty > 0);
+
+            const itemsHtml = selectedItems.map(i => `
+                <div class="flex justify-between py-2 border-b border-stone-800 text-base sm:text-lg">
+                    <span>${i.title} × <strong class="text-amber-400">${i.qty}</strong> 包</span>
+                    <span class="font-mono font-bold">NT$ ${(i.qty * i.price).toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            receipt.innerHTML = `
+                <div class="font-bold text-stone-100 mb-2 text-lg">訂購明細：</div>
+                ${itemsHtml}
+                <div class="flex justify-between pt-3 text-amber-400 font-bold text-base sm:text-lg">
+                    <span>申報匯款總額（末五碼：${escapeHtml(document.getElementById('remitLast5').value)}）</span>
+                    <span class="font-mono text-xl">NT$ ${escapeHtml(document.getElementById('remitAmount').value)}</span>
+                </div>
+                <div class="text-base text-stone-400 pt-2 border-t border-stone-800 mt-2">
+                    收件人：${escapeHtml(document.getElementById('recipientName').value)} (${escapeHtml(document.getElementById('recipientPhone').value)})
+                </div>
+            `;
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, s => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[s]));
+        }
+
+        /**
+         * 關閉成功視窗
+         */
+        function closeSuccessModal(shouldReset) {
+            const modal = document.getElementById('successModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (shouldReset) {
+                document.getElementById('groupBuyForm').reset();
+                PRODUCTS.forEach(item => {
+                    const input = document.getElementById(`qty_${item.id}`);
+                    input.value = 0;
+                    updateCardHighlight(item.id, 0);
+                });
+                calculateTotals();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // 初始化頁面
+        window.addEventListener('DOMContentLoaded', () => {
+            renderProducts();
+            calculateTotals();
+            document.getElementById('remitDateInput').addEventListener('change', syncDateFields);
+        });
+    </script>
+</body>
+</html>
