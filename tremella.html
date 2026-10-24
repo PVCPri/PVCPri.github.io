@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阿里山素燕窩 | 專屬訂購頁面</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&family=Noto+Serif+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        serif: ['"Noto Serif TC"', 'serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fff8f1',
+                            100: '#ffefdb',
+                            500: '#fc9a0a',
+                            600: '#ea8604',
+                            700: '#c26705',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #FFF8F1; 
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fc9a0a' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            position: relative;
+            overflow-x: hidden;
+        }
+        input[type="radio"]:checked {
+            background-color: #fc9a0a;
+            border-color: #fc9a0a;
+        }
+        input[type="radio"]:focus {
+            --tw-ring-color: #fc9a0a;
+        }
+        .form-input:focus, .form-textarea:focus {
+            border-color: #fc9a0a;
+            box-shadow: 0 0 0 1px #fc9a0a;
+            outline: none;
+        }
+        
+        /* 螢火蟲發光動畫 */
+        @keyframes firefly {
+            0%, 100% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+            50% { opacity: 1; transform: translate(25px, -30px) scale(1.3); }
+        }
+        .firefly {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: #fffbdf;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #ffe100, 0 0 24px #fc9a0a, 0 0 36px #ea8604;
+            animation: firefly 4s infinite ease-in-out alternate;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .firefly-1 { top: 10%; left: 8%; animation-duration: 3.2s; animation-delay: 0s; }
+        .firefly-2 { top: 25%; right: 12%; animation-duration: 4.8s; animation-delay: 1.2s; }
+        .firefly-3 { top: 50%; left: 5%; animation-duration: 3.6s; animation-delay: 0.5s; }
+        .firefly-4 { top: 75%; right: 8%; animation-duration: 4.2s; animation-delay: 2.1s; }
+        .firefly-5 { top: 90%; left: 45%; animation-duration: 3.9s; animation-delay: 0.8s; }
+        .firefly-title-1 { top: -10px; left: -20px; animation-duration: 3.5s; animation-delay: 0.2s; }
+        .firefly-title-2 { bottom: -10px; right: -20px; animation-duration: 4.5s; animation-delay: 1.5s; }
+    </style>
+</head>
+<body class="text-gray-800 antialiased font-sans min-h-screen pb-12">
+
+    <!-- 全頁漂浮螢火蟲點綴 -->
+    <span class="firefly firefly-1"></span>
+    <span class="firefly firefly-2"></span>
+    <span class="firefly firefly-3"></span>
+    <span class="firefly firefly-4"></span>
+    <span class="firefly firefly-5"></span>
+
+    <!-- 頂部裝飾條 -->
+    <div class="h-2 w-full bg-gradient-to-r from-brand-500 to-yellow-400"></div>
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 relative z-10">
+        
+        <!-- 表單與介紹區塊 (無邊線、無陰影) -->
+        <div id="orderFormContainer" class="bg-transparent overflow-hidden transition-all duration-500">
+            
+            <!-- 標題與介紹圖片 -->
+            <div class="px-8 py-10 relative overflow-hidden text-center rounded-2xl mb-6">
+                <div class="relative z-10 inline-block">
+                    <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 tracking-wider mb-4 relative">
+                        阿里山素燕窩
+                        <span class="firefly firefly-title-1"></span>
+                        <span class="firefly firefly-title-2"></span>
+                    </h1>
+                </div>
+                <p class="text-brand-700 font-medium tracking-wide text-lg mt-2">榮獲2020年農委會「銀髮友善食品」肯定，常溫保存，開瓶即飲</p>
+            </div>
+
+            <!-- 品牌故事 -->
+            <div class="px-8 py-8 mb-6">
+                <div class="prose prose-brand max-w-none text-gray-700 leading-relaxed text-base md:text-lg space-y-4 font-medium">
+                    <p>我們心裡都有同樣一份心意：想好好照顧自己，也想好好照顧身邊的人。<br>
+                    只是日子一忙，要把這份心意變成一件「安心、簡單、每天都做得到」的事，常常沒那麼容易。</p>
+                    
+                    <p>想為家人慢火熬一鍋銀耳，抽不出守在爐火旁的時間；想在架上挑一瓶現成的，又擔心成分與來源不夠讓人放心。萬生生機想陪你做的，就是讓「照顧」變得輕鬆一點、踏實一點。</p>
+                    
+                    <p>它可以是早晨醒來，留給自己的一口溫潤；可以是忙碌午後，取代含糖手搖的純淨植物滋養；也可以是下班回家，為爸媽遞上一份好入口的體貼順口。</p>
+                    
+                    <div class="bg-brand-50 rounded-xl p-6 mt-6 border border-brand-100">
+                        <h3 class="font-serif font-bold text-gray-900 text-xl mb-4">一瓶看似簡單的銀耳露，藏著不走捷徑的慢功夫：</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="text-2xl mr-3">🌿</span>
+                                <div>
+                                    <strong class="text-gray-900 text-lg">從源頭細心呵護</strong>
+                                    <p class="text-gray-600 mt-1">在智慧環控無塵環境裡，以純淨 RO 水霧細心澆灌，長出水潤飽滿的厚實朵瓣。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-2xl mr-3">🌿</span>
+                                <div>
+                                    <strong class="text-gray-900 text-lg">職人手作的慢功夫</strong>
+                                    <p class="text-gray-600 mt-1">鮮採後堅持人工細心挑除雜質，只保留膠質最豐富、質地最好的精華部位。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-2xl mr-3">🌿</span>
+                                <div>
+                                    <strong class="text-gray-900 text-lg">誠實極簡的配方</strong>
+                                    <p class="text-gray-600 mt-1">只有最單純的三樣東西：水、銀耳、冰糖。無防腐劑、無人工色素、無多餘添加。長輩、小孩和孕媽咪都能安心喝。</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 表單區塊 (無邊線、無陰影) -->
+            <div class="px-0 py-10 bg-transparent">
+                <h2 class="text-2xl md:text-3xl font-serif font-bold text-gray-900 mb-10 flex items-center justify-center">
+                    <svg class="w-8 h-8 mr-3 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                    填寫訂購資訊
+                </h2>
+                
+                <!-- 隱藏的 iframe 接收 Google 表單跳轉，避免離開網頁 -->
+                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+                <!-- 表單目標設定為隱藏的 iframe -->
+                <form action="https://docs.google.com/forms/d/e/1FAIpQLSeIKzpMYQwpRhs42vUcBG6kwMJvFYD5-ninKiC28MdRZbv8Ow/formResponse" method="POST" target="hidden_iframe" id="orderForm" class="space-y-10">
+                    
+                    <!-- 電子郵件 (Google 預設欄位) -->
+                    <div>
+                        <label class="block text-xl font-bold text-gray-800 mb-3">🌿 電子郵件 <span class="text-red-500">*</span></label>
+                        <input type="email" name="emailAddress" required class="form-input w-full px-4 py-4 border border-gray-300 rounded-lg bg-white transition-colors text-lg" placeholder="your@email.com">
+                    </div>
+
+                    <!-- FB名稱 (修改為正確的 Question ID: 716533617) -->
+                    <div>
+                        <label class="block text-xl font-bold text-gray-800 mb-3">🌿 FB名稱 <span class="text-red-500">*</span></label>
+                        <input type="text" name="entry.716533617" required class="form-input w-full px-4 py-4 border border-gray-300 rounded-lg bg-white transition-colors text-lg" placeholder="您在 Facebook 的顯示名稱">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- 6入禮盒 (修改為正確的 Question ID: 2010436982) -->
+                        <div class="bg-white p-6 rounded-2xl border border-amber-100 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(252,154,10,0.3)] transition-all duration-300">
+                            <div class="w-full h-64 mb-4 flex items-center justify-center p-2 bg-transparent">
+                                <img src="https://tshopping.thsrc.com.tw/dw/image/v2/BKQC_PRD/on/demandware.static/-/Sites-master-thsr/default/dwfaf091f3/images/%E8%90%AC%E7%94%9F%E7%94%9F%E6%A9%9F/1140718_%E8%90%AC%E7%94%9F%E7%94%9F%E6%A9%9F_%E9%98%BF%E9%87%8C%E5%B1%B1%E7%B4%A0%E7%87%95%E7%AA%A9%E7%94%A2%E5%93%81%E9%A0%85%E7%9B%AE-02_0%20-%20%E8%90%AC%E7%94%9F%E7%94%9F%E6%A9%9F.png?sw=800&sh=800" alt="6入禮盒" class="w-full h-full object-contain">
+                            </div>
+                            <label class="block text-xl font-bold text-gray-900 mb-auto text-center">
+                                阿里山素燕窩<br><span class="text-brand-700 text-2xl mt-1 inline-block">6入禮盒</span> <span class="text-red-500">*</span>
+                                <span class="block px-2 py-3 mt-3 mb-4 w-full text-center bg-brand-50 rounded-lg">
+                                    <span class="text-gray-800 text-lg font-bold">團購價</span> <span class="text-brand-700 font-black text-3xl mx-1">560</span><span class="text-brand-700 font-bold text-lg">元</span> 
+                                    <span class="text-base text-gray-500 line-through font-normal ml-2">原價650元</span>
+                                </span>
+                            </label>
+                            <div class="mt-2">
+                                <input type="number" name="entry.2010436982" required min="0" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500 transition-colors text-center text-2xl font-bold text-brand-700" placeholder="若無請填 0">
+                            </div>
+                        </div>
+
+                        <!-- 12入箱 (修改為正確的 Question ID: 1563199181) -->
+                        <div class="bg-white p-6 rounded-2xl border border-amber-100 flex flex-col h-full hover:-translate-y-2 hover:shadow-[0_15px_30px_rgba(252,154,10,0.3)] transition-all duration-300">
+                            <div class="w-full h-64 mb-4 flex items-center justify-center p-2 bg-transparent">
+                                <img src="https://down-tw.img.susercontent.com/file/e4bbc9e82c100320653f5be71b693478.webp" alt="12入箱" class="w-full h-full object-contain">
+                            </div>
+                            <label class="block text-xl font-bold text-gray-900 mb-auto text-center">
+                                阿里山素燕窩<br><span class="text-brand-700 text-2xl mt-1 inline-block">12入箱</span> <span class="text-red-500">*</span>
+                                <span class="block px-2 py-3 mt-3 mb-4 w-full text-center bg-brand-50 rounded-lg">
+                                    <span class="text-gray-800 text-lg font-bold">團購價</span> <span class="text-brand-700 font-black text-3xl mx-1">1080</span><span class="text-brand-700 font-bold text-lg">元</span> 
+                                    <span class="text-base text-gray-500 line-through font-normal ml-2">原價1200元</span>
+                                </span>
+                            </label>
+                            <div class="mt-2">
+                                <input type="number" name="entry.1563199181" required min="0" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500 transition-colors text-center text-2xl font-bold text-brand-700" placeholder="若無請填 0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6">
+                        <!-- 收件人姓名 (修改為正確的 Question ID: 739414769) -->
+                        <div>
+                            <label class="block text-xl font-bold text-gray-800 mb-3">🌿 收件人姓名 <span class="text-red-500">*</span></label>
+                            <input type="text" name="entry.739414769" required class="form-input w-full px-4 py-4 border border-gray-300 rounded-lg bg-white transition-colors text-lg" placeholder="請填寫真實姓名">
+                        </div>
+
+                        <!-- 收件人電話 (修改為正確的 Question ID: 1139850918) -->
+                        <div>
+                            <label class="block text-xl font-bold text-gray-800 mb-3">🌿 收件人電話 <span class="text-red-500">*</span></label>
+                            <input type="tel" name="entry.1139850918" required class="form-input w-full px-4 py-4 border border-gray-300 rounded-lg bg-white transition-colors text-lg" placeholder="例如: 0912-345-678">
+                        </div>
+                    </div>
+
+                    <!-- 地址 (修改為正確的 Question ID: 236277966) -->
+                    <div>
+                        <label class="block text-xl font-bold text-gray-800 mb-3">🌿 收件地址 <span class="text-base font-normal text-gray-600">(請包含郵遞區號)</span> <span class="text-red-500">*</span></label>
+                        <input type="text" name="entry.236277966" required class="form-input w-full px-4 py-4 border border-gray-300 rounded-lg bg-white transition-colors text-lg" placeholder="郵遞區號 + 完整地址">
+                    </div>
+
+                    <!-- 付款方式 (修改為正確的 Question ID: 1998422576) -->
+                    <div class="pt-8 border-t border-gray-200">
+                        <label class="block text-xl font-bold text-gray-800 mb-4">🌿 付款方式 <span class="text-red-500">*</span></label>
+                        <div class="space-y-4">
+                            <label class="flex items-center p-5 border border-gray-300 rounded-xl cursor-pointer hover:bg-brand-50 transition-colors bg-white shadow-sm">
+                                <input type="radio" name="entry.1998422576" value="轉帳匯款" required class="w-6 h-6 text-brand-500 border-gray-300 focus:ring-brand-500" onclick="toggleBankInfo(true)">
+                                <span class="ml-4 block text-gray-900 font-bold text-xl">轉帳匯款</span>
+                            </label>
+                            <label class="flex items-center p-5 border border-gray-300 rounded-xl cursor-pointer hover:bg-brand-50 transition-colors bg-white shadow-sm">
+                                <input type="radio" name="entry.1998422576" value="貨到付款（無需額外手續費）" required class="w-6 h-6 text-brand-500 border-gray-300 focus:ring-brand-500" onclick="toggleBankInfo(false)">
+                                <span class="ml-4 block text-gray-900 font-bold text-xl">貨到付款 <span class="text-gray-500 text-lg font-medium">（無需額外手續費）</span></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 匯款資訊區塊 (無邊框、無背景) -->
+                    <div id="bankInfoSection" class="p-0 space-y-6 transition-all duration-300 opacity-50 grayscale pointer-events-none">
+                        
+                        <!-- 虛擬黑卡風格收款帳戶 -->
+                        <div class="relative overflow-hidden bg-gradient-to-br from-gray-900 to-black p-8 sm:p-10 rounded-2xl shadow-2xl border border-gray-700 group">
+                            <!-- 背景大型浮水印 -->
+                            <svg class="absolute -right-6 -bottom-6 w-56 h-56 text-white opacity-5 transform -rotate-12 group-hover:scale-110 transition-transform duration-700 pointer-events-none" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                            
+                            <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+                                <div>
+                                    <p class="text-gray-400 text-sm sm:text-base tracking-widest mb-2 font-medium">收款帳戶 BANK ACCOUNT</p>
+                                    <p class="text-white font-bold text-xl mb-4">合作金庫 (006)</p>
+                                    <p class="font-mono text-4xl sm:text-5xl text-white font-black tracking-[0.1em] sm:tracking-[0.15em] leading-none" id="bankAccountNumber">5610717301596</p>
+                                </div>
+                                
+                                <button type="button" onclick="handleCopy()" id="copyBtn" class="shrink-0 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 text-white border border-white/25 font-bold py-3 px-6 rounded-xl transition-all backdrop-blur-sm active:scale-95 cursor-pointer shadow-lg w-full sm:w-auto">
+                                    <svg id="copyIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                                    <span id="copyText" class="text-lg">複製帳號</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 匯款末五碼 & 轉帳日期 (input box 須保有 border) -->
+                        <!-- 匯款末五碼 ID: 987275002, 轉帳日期 ID: 622339373 -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
+                            <div>
+                                <label class="block text-xl font-bold text-black mb-3">匯款末五碼</label>
+                                <input type="text" name="entry.987275002" id="bankDigits" class="form-input w-full px-4 py-4 border border-gray-400 rounded-lg bg-white text-black font-bold text-xl transition-colors focus:border-brand-500 focus:ring-0" placeholder="請填寫帳號末五碼" maxlength="5">
+                            </div>
+                            <div>
+                                <label class="block text-xl font-bold text-black mb-3">轉帳日期</label>
+                                <!-- 不加上 name 屬性，避免直接送出 YYYY-MM-DD -->
+                                <input type="date" id="bankDateInput" class="form-input w-full px-4 py-4 border border-gray-400 rounded-lg bg-white text-black font-bold text-xl transition-colors focus:border-brand-500 focus:ring-0">
+                                
+                                <!-- Google 表單隱藏拆解日期欄位 (非常重要：日期必須拆分為年、月、日) -->
+                                <input type="hidden" name="entry.622339373_year" id="bankDate_year">
+                                <input type="hidden" name="entry.622339373_month" id="bankDate_month">
+                                <input type="hidden" name="entry.622339373_day" id="bankDate_day">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 總金額 (無外框線，但 input box 有 border) -->
+                    <!-- 總金額 ID: 1215688211 -->
+                    <div class="pt-8 border-t border-gray-200">
+                        <label class="block text-xl font-bold text-gray-800 mb-4">🌿 匯款總金額 <span class="text-base font-normal text-gray-600">(記得加運費)</span> <span class="text-red-500">*</span></label>
+                        <div class="text-base text-gray-700 mb-5 space-y-2 bg-gray-50 p-5 rounded-xl border border-gray-100">
+                            <p>• 阿里山素燕窩 <strong class="font-bold text-brand-700 text-lg">6入禮盒 四盒即成箱</strong>，享有宅配免運，未成箱運費 150 元</p>
+                            <p>• 阿里山素燕窩 <strong class="font-bold text-brand-700 text-lg">12入 已成箱</strong>，任買一箱宅配免運</p>
+                        </div>
+                        <div class="relative mt-2">
+                            <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                                <span class="text-gray-500 text-xl font-bold">NT$</span>
+                            </div>
+                            <input type="number" name="entry.1215688211" required class="form-input w-full pl-20 pr-4 py-5 border border-gray-400 rounded-xl bg-white font-black text-3xl text-gray-900 transition-colors focus:border-brand-500 focus:ring-0" placeholder="請填寫計算後的總金額">
+                        </div>
+                    </div>
+
+                    <!-- 備註 (修改為正確的 Question ID: 866165752) -->
+                    <div class="pt-6">
+                        <label class="block text-xl font-bold text-gray-800 mb-3">其他備註</label>
+                        <p class="text-base text-gray-600 mb-4">可許願到貨日期，實際運送依物流為主 (許願最晚出貨日為 115/12/15 之前)</p>
+                        <textarea name="entry.866165752" rows="3" class="form-textarea w-full px-4 py-4 border border-gray-300 rounded-xl bg-white focus:bg-white transition-colors text-lg" placeholder="如有其他需求請填寫於此..."></textarea>
+                    </div>
+
+                    <!-- 提交按鈕 -->
+                    <div class="pt-10 text-center">
+                        <button type="submit" id="submitBtn" class="w-full md:w-3/4 mx-auto bg-brand-500 hover:bg-brand-600 text-white font-bold py-5 px-8 rounded-2xl shadow-xl shadow-brand-500/40 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center text-2xl cursor-pointer">
+                            <span>確認訂購和匯款</span>
+                            <svg class="w-7 h-7 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                        <p class="text-base font-bold text-red-600 mt-6 tracking-wide bg-red-50 py-3 rounded-lg inline-block px-6">※ 為確保填寫成功，點擊送出後請停留五秒後才關閉頁面</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- 成功訊息 (預設隱藏) -->
+        <div id="successMessage" class="hidden bg-white shadow-2xl rounded-3xl p-12 text-center transform transition-all border-t-8 border-green-500 mt-10">
+            <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
+                <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-4xl font-serif font-bold text-gray-900 mb-4">感謝您的訂購！</h2>
+            <p class="text-gray-600 text-xl mb-10 leading-relaxed">我們已收到您的訂單資訊，將盡快為您安排出貨事宜。<br>天然純淨的滋養，馬上為您送達。</p>
+            <button onclick="window.location.reload()" class="inline-block bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-4 px-10 rounded-xl transition-colors cursor-pointer text-lg">
+                填寫另一筆訂單
+            </button>
+        </div>
+        
+        <div class="h-10"></div>
+    </div>
+
+    <!-- 互動邏輯 -->
+    <script>
+        // 萬用複製帳號功能 (支援所有裝置)
+        function handleCopy() {
+            const accountNumber = "5610717301596";
+            const btn = document.getElementById('copyBtn');
+            const copyTextSpan = document.getElementById('copyText');
+            const copyIcon = document.getElementById('copyIcon');
+            
+            // 建立一個隱藏的 textarea 元素
+            const textArea = document.createElement("textarea");
+            textArea.value = accountNumber;
+            
+            // 防止畫面滾動，設定在左上角不可見處
+            textArea.style.position = "fixed";
+            textArea.style.top = "0";
+            textArea.style.left = "-9999px";
+            
+            document.body.appendChild(textArea);
+            
+            // 針對 iOS 設備的相容性處理
+            if (navigator.userAgent.match(/ipad|iphone/i)) {
+                const range = document.createRange();
+                range.selectNodeContents(textArea);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                textArea.setSelectionRange(0, 999999);
+            } else {
+                textArea.select();
+            }
+
+            try {
+                // 執行複製命令
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    // 改變按鈕樣式與文字
+                    btn.classList.remove('bg-white/10', 'hover:bg-white/20', 'border-white/25');
+                    btn.classList.add('bg-green-500', 'text-white', 'border-green-400');
+                    copyTextSpan.innerText = "已複製";
+                    // 換成打勾圖示
+                    copyIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>';
+                    
+                    // 兩秒後恢復原狀
+                    setTimeout(() => {
+                        btn.classList.remove('bg-green-500', 'border-green-400');
+                        btn.classList.add('bg-white/10', 'hover:bg-white/20', 'border-white/25');
+                        copyTextSpan.innerText = "複製帳號";
+                        copyIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>';
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('複製失敗', err);
+                alert("自動複製失敗，請手動複製帳號：5610717301596");
+            }
+            
+            // 移除 textarea
+            document.body.removeChild(textArea);
+        }
+
+        // 處理匯款欄位的啟動與禁用
+        function toggleBankInfo(isBankTransfer) {
+            const bankSection = document.getElementById('bankInfoSection');
+            const bankDigits = document.getElementById('bankDigits');
+            const bankDateInput = document.getElementById('bankDateInput');
+
+            if (isBankTransfer) {
+                bankSection.classList.remove('opacity-50', 'grayscale', 'pointer-events-none');
+                bankDigits.setAttribute('required', 'required');
+                bankDateInput.setAttribute('required', 'required');
+            } else {
+                bankSection.classList.add('opacity-50', 'grayscale', 'pointer-events-none');
+                bankDigits.removeAttribute('required');
+                bankDateInput.removeAttribute('required');
+                bankDigits.value = '';
+                bankDateInput.value = '';
+            }
+        }
+
+        // 表單提交邏輯 - 拆解日期並進入 Loading 狀態
+        let isSubmitted = false;
+
+        document.getElementById('orderForm').addEventListener('submit', function(event) {
+            // 解析日期格式 (將 YYYY-MM-DD 轉為 Google 表單需要的 Year, Month, Day)
+            const dateVal = document.getElementById('bankDateInput').value;
+            if (dateVal) {
+                const parts = dateVal.split('-');
+                if (parts.length === 3) {
+                    document.getElementById('bankDate_year').value = parts[0];
+                    document.getElementById('bankDate_month').value = parts[1];
+                    document.getElementById('bankDate_day').value = parts[2];
+                }
+            } else {
+                document.getElementById('bankDate_year').value = '';
+                document.getElementById('bankDate_month').value = '';
+                document.getElementById('bankDate_day').value = '';
+            }
+
+            // 改變按鈕狀態
+            isSubmitted = true;
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-7 w-7 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> <span>資料送出中...</span>`;
+            btn.classList.add('opacity-80', 'cursor-wait');
+        });
+
+        // 監聽 iframe 載入完畢 (代表 Google 表單已經收到資料)
+        document.getElementById('hidden_iframe').addEventListener('load', function() {
+            if (isSubmitted) {
+                // 給予 1 秒的緩衝時間讓畫面更平滑
+                setTimeout(() => {
+                    document.getElementById('orderFormContainer').style.display = 'none';
+                    document.getElementById('successMessage').classList.remove('hidden');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
